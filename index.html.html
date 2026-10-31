@@ -1,0 +1,3083 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вайб Кодинг • Генератор задач на день (180+ задач на 30 дней)</title>
+  <style>
+    :root {
+      --bg-dark: #0a0d1e;
+      --card-bg: #111538;
+      --card-surface: #161a42;
+      --border-color: #242b6b;
+      --accent-purple: #8b5cf6;
+      --accent-indigo: #6366f1;
+      --accent-pink: #ec4899;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 40px;
+    }
+    .glow-bg {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(circle at 20% 15%, rgba(139, 92, 246, 0.12), transparent 45%),
+                  radial-gradient(circle at 80% 40%, rgba(99, 102, 241, 0.1), transparent 50%);
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 16px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+    header {
+      background: rgba(14, 18, 43, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-indigo));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4);
+    }
+    h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #c4b5fd, #e0e7ff, #ffffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      font-size: 0.75rem;
+      color: #a5b4fc;
+      opacity: 0.85;
+    }
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      background: #0f1230;
+      padding: 6px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .tab-btn.active {
+      background: linear-gradient(90deg, var(--accent-indigo), var(--accent-purple));
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.35);
+    }
+    .main-actions-card {
+      background: linear-gradient(135deg, #13173d, #101332);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+    .actions-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+    }
+    .progress-bar-bg {
+      width: 120px;
+      height: 8px;
+      background: #0a0d20;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-indigo), var(--accent-purple));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .three-buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .btn-main {
+      padding: 12px 18px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+    .btn-main:hover { transform: translateY(-2px); }
+    .btn-main:active { transform: translateY(0); }
+    .btn-add {
+      background: linear-gradient(90deg, var(--accent-indigo), var(--accent-purple));
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+    }
+    .btn-delete {
+      background: #1b1530;
+      border-color: rgba(244, 63, 94, 0.35);
+      color: #fda4af;
+    }
+    .btn-save {
+      background: linear-gradient(90deg, #059669, #10b981);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+    .generator-card {
+      background: rgba(17, 21, 56, 0.75);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    select, input[type="text"], input[type="time"] {
+      background: #0b0e24;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .btn-gen {
+      background: linear-gradient(90deg, #6d28d9, #4f46e5);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-append {
+      background: #181d45;
+      color: #c4b5fd;
+      border: 1px solid var(--border-color);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .status-tabs {
+      display: flex;
+      gap: 4px;
+      background: #0d1028;
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+    .status-tab {
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .status-tab.active {
+      background: rgba(139, 92, 246, 0.25);
+      color: #c4b5fd;
+      font-weight: 600;
+    }
+    .tasks-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .task-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: rgba(22, 26, 63, 0.85);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 14px;
+      transition: all 0.2s;
+    }
+    .task-item:hover {
+      background: #1c2150;
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+    .task-item.completed {
+      opacity: 0.65;
+      background: rgba(21, 25, 54, 0.5);
+    }
+    .task-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+    .task-checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      border: 2px solid #6366f1;
+      background: #0a0d20;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .task-checkbox.checked {
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-indigo));
+      border-color: var(--accent-purple);
+      color: #fff;
+    }
+    .task-title {
+      font-size: 0.92rem;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+    .task-item.completed .task-title {
+      text-decoration: line-through;
+      color: #94a3b8;
+    }
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+      font-size: 0.72rem;
+    }
+    .badge {
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .badge-prompting { background: #2e1065; color: #d8b4fe; border-color: #7e22ce; }
+    .badge-flow { background: #1e1b4b; color: #a5b4fc; border-color: #4338ca; }
+    .badge-shipping { background: #064e3b; color: #6ee7b7; border-color: #059669; }
+    .badge-fuel { background: #451a03; color: #fcd34d; border-color: #b45309; }
+    .badge-tuning { background: #500724; color: #f472b6; border-color: #be185d; }
+    .xp-badge {
+      background: #0d1028;
+      border: 1px solid var(--border-color);
+      color: #a5b4fc;
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: monospace;
+    }
+    .delete-item-btn {
+      background: transparent;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 6px;
+      border-radius: 8px;
+    }
+    .delete-item-btn:hover {
+      color: var(--accent-rose);
+      background: rgba(244, 63, 94, 0.1);
+    }
+    .level-progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #0a0d24;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      margin: 6px 0;
+    }
+    .level-progress-fill-skill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #6366f1);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+    .level-progress-fill-vibe {
+      height: 100%;
+      background: linear-gradient(90deg, #ec4899, #f43f5e);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+    .balance-bar-container {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: #0a0d24;
+      overflow: hidden;
+      display: flex;
+      gap: 2px;
+      padding: 2px;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+    .balance-fill-skill {
+      height: 100%;
+      background: linear-gradient(90deg, #6366f1, #a855f7);
+      border-radius: 999px 0 0 999px;
+      transition: width 0.4s ease;
+    }
+    .balance-fill-vibe {
+      height: 100%;
+      background: linear-gradient(90deg, #a855f7, #ec4899);
+      border-radius: 0 999px 999px 0;
+      transition: width 0.4s ease;
+    }
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .achievement-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      background: rgba(13, 16, 36, 0.6);
+      transition: all 0.2s;
+    }
+    .achievement-card.unlocked {
+      background: rgba(23, 26, 66, 0.95);
+      border-color: rgba(168, 85, 247, 0.5);
+      box-shadow: 0 4px 14px rgba(168, 85, 247, 0.15);
+    }
+    .achievement-card.locked {
+      opacity: 0.5;
+    }
+    .achievement-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      background: #0a0d24;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .achievement-card.unlocked .achievement-icon {
+      background: rgba(168, 85, 247, 0.2);
+      border-color: rgba(168, 85, 247, 0.4);
+    }
+    .scoring-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .scoring-card {
+      background: #14183d;
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.8rem;
+    }
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+      margin-top: 12px;
+      padding-right: 4px;
+    }
+    .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #14183d;
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 10px;
+      font-size: 0.8rem;
+    }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #121633;
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #161b3d;
+    }
+    .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #161a42;
+      border: 1px solid var(--accent-purple);
+      padding: 12px 18px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      font-size: 0.85rem;
+      z-index: 2000;
+      display: none;
+      animation: fadeIn 0.2s;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    /* TOOLS TAB STYLES */
+    .tool-card {
+      background: linear-gradient(135deg, #111435, #0e112d);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      border-radius: 16px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      transition: all 0.2s ease;
+    }
+    .tool-card:hover {
+      border-color: rgba(139, 92, 246, 0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+    .tool-card.tool-highlight {
+      background: linear-gradient(135deg, #17143e, #211244);
+      border: 1px solid rgba(245, 158, 11, 0.6);
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.15);
+    }
+    .tool-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .tool-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+    .tool-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .tool-tag-gold {
+      background: linear-gradient(90deg, #f59e0b, #d97706);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+    }
+    .tool-tag-purple {
+      background: linear-gradient(90deg, #8b5cf6, #6366f1);
+      color: #fff;
+    }
+    .tool-tag-pink {
+      background: linear-gradient(90deg, #ec4899, #8b5cf6);
+      color: #fff;
+    }
+    .tool-tag-blue {
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      color: #fff;
+    }
+    .tool-tag-green {
+      background: linear-gradient(90deg, #10b981, #059669);
+      color: #fff;
+    }
+    .tool-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .tool-feat-chip {
+      font-size: 0.72rem;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 2px 8px;
+      border-radius: 6px;
+      color: #cbd5e1;
+    }
+    .tool-tip-box {
+      font-size: 0.74rem;
+      background: rgba(168, 85, 247, 0.12);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      padding: 6px 10px;
+      border-radius: 8px;
+      color: #e9d5ff;
+    }
+    .tool-action-col {
+      width: 220px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border-left: 1px solid rgba(255,255,255,0.08);
+      padding-left: 18px;
+    }
+    .tool-visit-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      background: linear-gradient(90deg, var(--accent-indigo), var(--accent-purple));
+      border: 1px solid rgba(168, 85, 247, 0.5);
+      box-shadow: 0 4px 14px rgba(139, 92, 246, 0.3);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .tool-visit-btn:hover {
+      background: linear-gradient(90deg, #6366f1, #a855f7);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(139, 92, 246, 0.45);
+    }
+    .tool-visit-btn.btn-gold {
+      background: linear-gradient(90deg, #d97706, #9333ea);
+      border-color: rgba(245, 158, 11, 0.7);
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+    }
+    .tool-visit-btn.btn-pink {
+      background: linear-gradient(90deg, #ec4899, #8b5cf6);
+      border-color: rgba(236, 72, 153, 0.5);
+    }
+    .tool-visit-btn.btn-blue {
+      background: linear-gradient(90deg, #2563eb, #4f46e5);
+      border-color: rgba(59, 130, 246, 0.5);
+    }
+    .tool-url-preview {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #090c22;
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.7rem;
+      color: #94a3b8;
+    }
+    @media (max-width: 768px) {
+      .tool-card {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .tool-action-col {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        padding-left: 0;
+        padding-top: 12px;
+      }
+    }
+
+    /* ========================================================
+       THEMES FOR STANDALONE HTML
+       1. авторский - default cosmic indigo
+       2. хакер - all cubes & background black (#000), borders & text acid green (#00ff66)
+       3. ангел - blocks & background white & gray, borders & text yellow/gold (#eab308)
+       Manifesto (#manifestoModal, .manifesto-card) is strictly preserved.
+       ======================================================== */
+    /* HACKER THEME */
+    body[data-theme="hacker"] {
+      background-color: #000000 !important;
+      color: #00ff66 !important;
+    }
+    body[data-theme="hacker"] header:not(#manifestoModal *),
+    body[data-theme="hacker"] .main-actions-card:not(.manifesto-card):not(#manifestoModal *),
+    body[data-theme="hacker"] .generator-card,
+    body[data-theme="hacker"] .task-item,
+    body[data-theme="hacker"] .tool-card,
+    body[data-theme="hacker"] .level-card,
+    body[data-theme="hacker"] .tabs-nav,
+    body[data-theme="hacker"] .status-tabs,
+    body[data-theme="hacker"] .theme-card,
+    body[data-theme="hacker"] .modal-box:not(#manifestoModal .modal-box),
+    body[data-theme="hacker"] select,
+    body[data-theme="hacker"] input,
+    body[data-theme="hacker"] .btn-main:not(#manifestoModal *),
+    body[data-theme="hacker"] .btn-gen,
+    body[data-theme="hacker"] .btn-append,
+    body[data-theme="hacker"] .tab-btn:not(#manifestoModal *),
+    body[data-theme="hacker"] .tool-tag,
+    body[data-theme="hacker"] .tool-feat-chip,
+    body[data-theme="hacker"] .tool-tip-box,
+    body[data-theme="hacker"] .tool-url-preview {
+      background-color: #000000 !important;
+      background-image: none !important;
+      border-color: #00ff66 !important;
+      color: #00ff66 !important;
+      box-shadow: 0 0 10px rgba(0, 255, 102, 0.15) !important;
+    }
+    body[data-theme="hacker"] h1,
+    body[data-theme="hacker"] h2,
+    body[data-theme="hacker"] h3,
+    body[data-theme="hacker"] h4,
+    body[data-theme="hacker"] p,
+    body[data-theme="hacker"] span:not(#manifestoModal *):not(.manifesto-card *),
+    body[data-theme="hacker"] strong:not(#manifestoModal *):not(.manifesto-card *),
+    body[data-theme="hacker"] div:not(#manifestoModal *):not(.manifesto-card *) {
+      color: #00ff66 !important;
+    }
+    body[data-theme="hacker"] .tab-btn.active {
+      background: #052e16 !important;
+      border-color: #00ff66 !important;
+      color: #00ff66 !important;
+    }
+    body[data-theme="hacker"] .progress-bar-fill {
+      background: #00ff66 !important;
+    }
+
+    /* ANGEL THEME */
+    body[data-theme="angel"] {
+      background-color: #f8fafc !important;
+      color: #854d0e !important;
+    }
+    body[data-theme="angel"] header:not(#manifestoModal *),
+    body[data-theme="angel"] .main-actions-card:not(.manifesto-card):not(#manifestoModal *),
+    body[data-theme="angel"] .generator-card,
+    body[data-theme="angel"] .task-item,
+    body[data-theme="angel"] .tool-card,
+    body[data-theme="angel"] .level-card,
+    body[data-theme="angel"] .tabs-nav,
+    body[data-theme="angel"] .status-tabs,
+    body[data-theme="angel"] .theme-card,
+    body[data-theme="angel"] .modal-box:not(#manifestoModal .modal-box),
+    body[data-theme="angel"] select,
+    body[data-theme="angel"] input,
+    body[data-theme="angel"] .btn-main:not(#manifestoModal *),
+    body[data-theme="angel"] .btn-gen,
+    body[data-theme="angel"] .btn-append,
+    body[data-theme="angel"] .tab-btn:not(#manifestoModal *),
+    body[data-theme="angel"] .tool-tag,
+    body[data-theme="angel"] .tool-feat-chip,
+    body[data-theme="angel"] .tool-tip-box,
+    body[data-theme="angel"] .tool-url-preview {
+      background-color: #ffffff !important;
+      background-image: none !important;
+      border-color: #eab308 !important;
+      color: #854d0e !important;
+      box-shadow: 0 4px 14px rgba(234, 179, 8, 0.15) !important;
+    }
+    body[data-theme="angel"] h1,
+    body[data-theme="angel"] h2,
+    body[data-theme="angel"] h3,
+    body[data-theme="angel"] h4,
+    body[data-theme="angel"] p,
+    body[data-theme="angel"] span:not(#manifestoModal *):not(.manifesto-card *),
+    body[data-theme="angel"] strong:not(#manifestoModal *):not(.manifesto-card *),
+    body[data-theme="angel"] div:not(#manifestoModal *):not(.manifesto-card *) {
+      color: #854d0e !important;
+    }
+    body[data-theme="angel"] .tab-btn.active {
+      background: #fef08a !important;
+      border-color: #ca8a04 !important;
+      color: #713f12 !important;
+    }
+    body[data-theme="angel"] .progress-bar-fill {
+      background: #eab308 !important;
+    }
+
+    /* THEME CARDS LAYOUT */
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .theme-card {
+      background: rgba(17, 21, 56, 0.75);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .theme-card:hover {
+      border-color: rgba(139, 92, 246, 0.6);
+      transform: translateY(-2px);
+    }
+    .theme-card.active-theme {
+      border-color: #c084fc !important;
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.35) !important;
+      background: #151a4a !important;
+    }
+    .swatch-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .swatch-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-bg"></div>
+
+  <header>
+    <div class="container header-content">
+      <div class="logo-group">
+        <div class="logo-icon">⚡</div>
+        <div>
+          <h1>Вайб Кодинг • VS Code Edition</h1>
+          <div class="subtitle">База из 180+ уникальных задач (на все 30 дней) • Локальный запуск без Node.js</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button id="headerSaveBtn" class="btn-main btn-save" style="padding: 8px 14px; font-size: 0.8rem;">
+          💾 tasks.json
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="margin-top: 20px;">
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-tab="tasks">📋 Задачи дня</button>
+      <button class="tab-btn" data-tab="stats">🏆 Прокачка (Скилл & Вайб)</button>
+      <button class="tab-btn" data-tab="guide">📖 Инструкция для VS Code</button>
+      <button class="tab-btn" data-tab="tools">🛠️ Инструменты & ИИ</button>
+      <button class="tab-btn" data-tab="themes">🎨 Оформление</button>
+    </div>
+
+    <!-- TAB 1: TASKS -->
+    <div id="tab-tasks">
+      <section class="main-actions-card">
+        <div class="actions-header">
+          <div>
+            <div style="font-size: 0.75rem; font-weight: 700; color: #a78bfa; text-transform: uppercase;">Главные действия</div>
+            <div style="font-size: 0.78rem; color: #94a3b8;">База: 180+ неповторяющихся задач на весь месяц</div>
+          </div>
+          <div class="progress-wrap">
+            <span>Прогресс: <strong id="progressText" style="color: #c4b5fd;">0 / 0</strong></span>
+            <div class="progress-bar-bg">
+              <div id="progressBar" class="progress-bar-fill"></div>
+            </div>
+            <span id="progressPercent" style="font-weight: 700; color: #c4b5fd;">0%</span>
+          </div>
+        </div>
+
+        <div class="three-buttons-grid">
+          <!-- Button 1: Add + Random 70+ -->
+          <div style="display: flex; gap: 8px;">
+            <button id="btnOpenAdd" class="btn-main btn-add" style="flex: 1;">
+              <span>➕</span> <span>Добавить</span>
+            </button>
+            <button id="btnDirectRandom" class="btn-main" style="background: #1c2254; color: #c4b5fd; border-color: rgba(139,92,246,0.4); padding: 12px 14px;" title="Случайная задача из базы 180+">
+              🎲 180+
+            </button>
+          </div>
+          <!-- Button 2: Delete -->
+          <button id="btnOpenDelete" class="btn-main btn-delete">
+            <span>🗑️</span> <span>Удалить</span>
+          </button>
+          <!-- Button 3: Save -->
+          <button id="btnSaveJson" class="btn-main btn-save">
+            <span>💾</span> <span>Сохранить в JSON</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Generator -->
+      <section class="generator-card">
+        <div>
+          <div style="font-size: 0.88rem; font-weight: 600;">⚡ Генератор задач: Вайб Кодинг (180+ задач)</div>
+          <div style="font-size: 0.75rem; color: #a5b4fc;">Каждый день генерирует абсолютно новые задачи из базы</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <select id="presetSelect">
+            <option value="random">🎲 Случайный умный микс (из 180+ задач на 30 дней)</option>
+            <option value="ultravibe">Ультра Вайб Кодинг (AI Flow)</option>
+            <option value="shipfast">Быстрый Шиппинг MVP за день</option>
+            <option value="nightflow">Ночной Неоновый Хакатон</option>
+            <option value="polish">Вайб-тюнинг и эстетика UI</option>
+          </select>
+          <button id="btnGenerate" class="btn-gen">⚡ Сгенерировать</button>
+          <button id="btnAppend" class="btn-append">+ Дополнить</button>
+        </div>
+      </section>
+
+      <div class="filter-bar">
+        <div class="status-tabs">
+          <button class="status-tab active" data-filter="all">Все (<span id="countAll">0</span>)</button>
+          <button class="status-tab" data-filter="active">В потоке (<span id="countActive">0</span>)</button>
+          <button class="status-tab" data-filter="completed">Зашиплено (<span id="countCompleted">0</span>)</button>
+        </div>
+        <input type="text" id="searchInput" placeholder="Поиск по 180+ задачам..." style="width: 220px;">
+      </div>
+
+      <div id="tasksList" class="tasks-list"></div>
+    </div>
+
+    <!-- TAB 2: STATS -->
+    <div id="tab-stats" style="display: none;">
+      <!-- TOP BANNER WITH BALANCE OVERVIEW -->
+      <div class="main-actions-card" style="margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, #9333ea, #4f46e5); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 4px 14px rgba(147, 51, 234, 0.4);">
+              🏆
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin: 0;">Прокачка: Скилл & Вайб</h3>
+                <span style="font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; background: rgba(168, 85, 247, 0.2); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.4);">RPG Статы</span>
+              </div>
+              <p style="font-size: 0.78rem; color: #a5b4fc; margin-top: 3px;">
+                Баллы начисляются за чекбоксы выполненных задач с учетом их сложности
+              </p>
+            </div>
+          </div>
+          
+          <div style="display: flex; gap: 10px;">
+            <div style="background: #0e1230; border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 12px; padding: 8px 14px; text-align: center;">
+              <span style="font-size: 0.7rem; color: #a5b4fc; display: block;">Всего очков</span>
+              <strong id="statsTotalXp" style="font-size: 1.05rem; color: #fff; font-weight: 800;">0 XP</strong>
+            </div>
+            <div style="background: #0e1230; border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 12px; padding: 8px 14px; text-align: center;">
+              <span style="font-size: 0.7rem; color: #d8b4fe; display: block;">Ачивки</span>
+              <strong id="statsUnlockedAch" style="font-size: 1.05rem; color: #f3e8ff; font-weight: 800;">0 / 8</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- BALANCE BAR -->
+        <div style="background: #0c0e24; border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 12px; padding: 12px 14px; margin-top: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.76rem; margin-bottom: 8px;">
+            <span style="color: #818cf8; font-weight: 600;">🧠 Скилл: <span id="balanceSkillPercent">50%</span> (<span id="statsSkillValInline">0 XP</span>)</span>
+            <span id="balanceStatusTitle" style="color: #c4b5fd; font-weight: 700;">Сессия только началась</span>
+            <span style="color: #f472b6; font-weight: 600;">☕ Вайб: <span id="balanceVibePercent">50%</span> (<span id="statsVibeValInline">0 XP</span>)</span>
+          </div>
+          <div class="balance-bar-container">
+            <div id="balanceFillSkill" class="balance-fill-skill" style="width: 50%;"></div>
+            <div id="balanceFillVibe" class="balance-fill-vibe" style="width: 50%;"></div>
+          </div>
+          <div id="balanceStatusDesc" style="font-size: 0.72rem; color: #94a3b8; text-align: center; margin-top: 6px;">
+            Выполните первые задачи дня для начисления очков!
+          </div>
+        </div>
+      </div>
+
+      <!-- TWO MAIN LEVEL CARDS: SKILL VS VIBE -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 16px;">
+        <!-- 1. СКИЛЛ КАРТОЧКА -->
+        <div style="background: linear-gradient(135deg, #12173e, #0f122f); border: 1px solid rgba(99, 102, 241, 0.4); border-radius: 16px; padding: 18px; box-shadow: 0 6px 20px rgba(0,0,0,0.3); display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span style="font-size: 0.75rem; font-weight: 700; color: #818cf8; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
+                🧠 СКИЛЛ (AI & HARDCORE)
+              </span>
+              <span id="statsSkillBadge" style="font-size: 0.72rem; padding: 2px 10px; border-radius: 20px; background: #0c0f2b; color: #a5b4fc; border: 1px solid #4f46e5; font-family: monospace; font-weight: 700;">
+                Ур. 1
+              </span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+              <div id="statsSkillIcon" style="width: 54px; height: 54px; border-radius: 14px; background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.4); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0;">
+                🌱
+              </div>
+              <div>
+                <h4 id="statsSkillTitle" style="font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0 0 3px 0;">
+                  Промпт-Новичок
+                </h4>
+                <p id="statsSkillPerk" style="font-size: 0.76rem; color: #c4b5fd; margin: 0; line-height: 1.35;">
+                  Умеет составлять базовые промпты для AI
+                </p>
+              </div>
+            </div>
+
+            <!-- XP progress bar -->
+            <div style="margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.76rem; color: #cbd5e1; margin-bottom: 4px;">
+                <span>Прогресс умения</span>
+                <span id="statsSkillXpLabel" style="font-family: monospace; font-weight: 700; color: #818cf8;">
+                  0 XP / 60 XP
+                </span>
+              </div>
+              <div class="level-progress-bar">
+                <div id="statsSkillProgressBar" class="level-progress-fill-skill" style="width: 0%;"></div>
+              </div>
+              <div id="statsSkillNextInfo" style="font-size: 0.72rem; color: #94a3b8; margin-top: 3px;">
+                До «AI-Кодер»: ещё <strong>60 XP</strong>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding-top: 10px; border-top: 1px solid rgba(99, 102, 241, 0.2); font-size: 0.72rem; color: #94a3b8;">
+            <strong style="color: #cbd5e1;">Как качать:</strong> решать задачи на AI-промптинг, логику кода, багфиксы и деплой в прод.
+          </div>
+        </div>
+
+        <!-- 2. ВАЙБ КАРТОЧКА -->
+        <div style="background: linear-gradient(135deg, #24133b, #160f2a); border: 1px solid rgba(236, 72, 153, 0.4); border-radius: 16px; padding: 18px; box-shadow: 0 6px 20px rgba(0,0,0,0.3); display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span style="font-size: 0.75rem; font-weight: 700; color: #f472b6; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
+                ☕ ВАЙБ (FLOW & CHILL)
+              </span>
+              <span id="statsVibeBadge" style="font-size: 0.72rem; padding: 2px 10px; border-radius: 20px; background: #1c0e2a; color: #fbcfe8; border: 1px solid #db2777; font-family: monospace; font-weight: 700;">
+                Ур. 1
+              </span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+              <div id="statsVibeIcon" style="width: 54px; height: 54px; border-radius: 14px; background: rgba(236, 72, 153, 0.2); border: 1px solid rgba(236, 72, 153, 0.4); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0;">
+                ☕
+              </div>
+              <div>
+                <h4 id="statsVibeTitle" style="font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0 0 3px 0;">
+                  Кофейный старт
+                </h4>
+                <p id="statsVibePerk" style="font-size: 0.76rem; color: #fbcfe8; margin: 0; line-height: 1.35;">
+                  Первая чашка кофе и настройка плейлиста
+                </p>
+              </div>
+            </div>
+
+            <!-- XP progress bar -->
+            <div style="margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.76rem; color: #cbd5e1; margin-bottom: 4px;">
+                <span>Прогресс умения</span>
+                <span id="statsVibeXpLabel" style="font-family: monospace; font-weight: 700; color: #f472b6;">
+                  0 XP / 60 XP
+                </span>
+              </div>
+              <div class="level-progress-bar">
+                <div id="statsVibeProgressBar" class="level-progress-fill-vibe" style="width: 0%;"></div>
+              </div>
+              <div id="statsVibeNextInfo" style="font-size: 0.72rem; color: #94a3b8; margin-top: 3px;">
+                До «Слушатель Lo-Fi»: ещё <strong>60 XP</strong>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding-top: 10px; border-top: 1px solid rgba(236, 72, 153, 0.2); font-size: 0.72rem; color: #94a3b8;">
+            <strong style="color: #cbd5e1;">Как качать:</strong> перерывы на кофе/чай, разминка, Lo-Fi музыка, эстетика IDE и чилл в потоке.
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. ИСТОРИЯ НАЧИСЛЕНИЯ БАЛЛОВ -->
+      <div class="main-actions-card" style="margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="font-size: 0.95rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; margin: 0;">
+            <span>📈 История начисления баллов</span>
+            <span id="statsHistoryCount" style="font-size: 0.75rem; color: #a5b4fc; font-weight: 500;">(0 выполненных)</span>
+          </h3>
+          <button type="button" id="btnGoToTasksFromStats" style="background: transparent; border: none; color: #c4b5fd; font-size: 0.76rem; cursor: pointer; text-decoration: underline;">
+            К задачам →
+          </button>
+        </div>
+        <div id="statsHistoryList" class="history-list"></div>
+      </div>
+
+      <!-- 4. ТАБЛИЦА НАЧИСЛЕНИЯ БАЛЛОВ ЗА ТИПЫ ЗАДАЧ -->
+      <div class="main-actions-card" style="margin-bottom: 16px;">
+        <h3 style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #d8b4fe; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+          ⚖️ Таблица начисления баллов за типы задач
+        </h3>
+        <div class="scoring-grid">
+          <div class="scoring-card">
+            <span style="display: block; font-weight: 700; color: #e2e8f0; margin-bottom: 2px;">🚀 Шиппинг & Деплой</span>
+            <span style="font-size: 0.7rem; color: #94a3b8; display: block;">Тяжелые задачи</span>
+            <div style="margin-top: 8px; color: #818cf8; font-family: monospace; font-weight: 700;">+35-50 Скилл</div>
+            <div style="color: #f472b6; font-family: monospace; font-size: 0.72rem;">+12-18 Вайб</div>
+          </div>
+          <div class="scoring-card">
+            <span style="display: block; font-weight: 700; color: #e2e8f0; margin-bottom: 2px;">⚡ Промптинг & AI</span>
+            <span style="font-size: 0.7rem; color: #94a3b8; display: block;">Кодинг & Логика</span>
+            <div style="margin-top: 8px; color: #818cf8; font-family: monospace; font-weight: 700;">+28-42 Скилл</div>
+            <div style="color: #f472b6; font-family: monospace; font-size: 0.72rem;">+10-15 Вайб</div>
+          </div>
+          <div class="scoring-card">
+            <span style="display: block; font-weight: 700; color: #e2e8f0; margin-bottom: 2px;">✨ Тюнинг & UI</span>
+            <span style="font-size: 0.7rem; color: #94a3b8; display: block;">Верстка & Багфиксы</span>
+            <div style="margin-top: 8px; color: #818cf8; font-family: monospace; font-weight: 700;">+20-30 Скилл</div>
+            <div style="color: #f472b6; font-family: monospace; font-size: 0.72rem;">+16-24 Вайб</div>
+          </div>
+          <div class="scoring-card">
+            <span style="display: block; font-weight: 700; color: #e2e8f0; margin-bottom: 2px;">🎧 Вайб & Фокус</span>
+            <span style="font-size: 0.7rem; color: #94a3b8; display: block;">Музыка & Поток</span>
+            <div style="margin-top: 8px; color: #f472b6; font-family: monospace; font-weight: 700;">+30-45 Вайб</div>
+            <div style="color: #818cf8; font-family: monospace; font-size: 0.72rem;">+10-15 Скилл</div>
+          </div>
+          <div class="scoring-card">
+            <span style="display: block; font-weight: 700; color: #e2e8f0; margin-bottom: 2px;">☕ Кофе & Топливо</span>
+            <span style="font-size: 0.7rem; color: #94a3b8; display: block;">Отдых & Разминка</span>
+            <div style="margin-top: 8px; color: #f472b6; font-family: monospace; font-weight: 700;">+36-54 Вайб</div>
+            <div style="color: #818cf8; font-family: monospace; font-size: 0.72rem;">+4-6 Скилл</div>
+          </div>
+        </div>
+        <p style="font-size: 0.72rem; color: #94a3b8; margin-top: 10px; margin-bottom: 0;">
+          * Задачи высокого приоритета (🔥) дают множитель ×1.5 к очкам, среднего (⚡) — ×1.2.
+        </p>
+      </div>
+
+      <!-- 5. ДОСТИЖЕНИЯ ВАЙБ-КОДЕРА -->
+      <div class="main-actions-card">
+        <h3 style="font-size: 0.95rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; margin: 0 0 4px 0;">
+          <span>🎖️ Достижения вайб-кодера</span>
+        </h3>
+        <p style="font-size: 0.78rem; color: #a5b4fc; margin-bottom: 12px;">Открываются автоматически при выполнении соответствующих задач</p>
+        <div id="statsAchievementsGrid" class="achievements-grid"></div>
+      </div>
+    </div>
+
+    <!-- TAB 3: GUIDE -->
+    <div id="tab-guide" style="display: none;">
+      <!-- Hero Banner -->
+      <div class="main-actions-card" style="background: linear-gradient(135deg, #141846 0%, #111438 50%, #0c0f2b 100%); border-color: rgba(168, 85, 247, 0.4); margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+              <span>📖 Полная инструкция к проекту</span>
+              <span style="font-size: 0.72rem; padding: 2px 10px; border-radius: 999px; background: rgba(99, 102, 241, 0.25); color: #c7d2fe; border: 1px solid rgba(99, 102, 241, 0.4);">
+                Вайб Кодинг & VS Code
+              </span>
+            </h3>
+            <p style="font-size: 0.8rem; color: #c4b5fd; margin: 0;">
+              3 главные кнопки, генератор на 180+ задач, чекбоксы, начисление Скилла/Вайба и запуск в VS Code
+            </p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn-main btn-gen" onclick="switchToTasksTab()" style="padding: 6px 14px; font-size: 0.75rem;">
+              📋 К задачам дня
+            </button>
+            <button type="button" class="btn-main btn-append" onclick="switchToStatsTab()" style="padding: 6px 14px; font-size: 0.75rem;">
+              🏆 К прокачке
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1. ИНСТРУКЦИЯ ПО 3-М ГЛАВНЫМ КНОПКАМ -->
+      <div class="main-actions-card" style="margin-bottom: 16px;">
+        <h4 style="font-size: 0.95rem; font-weight: 800; color: #fff; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;">
+          <span style="width: 26px; height: 26px; border-radius: 8px; background: rgba(168, 85, 247, 0.25); color: #d8b4fe; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800;">1</span>
+          <span>Инструкция по 3-м главным кнопкам управления</span>
+        </h4>
+        <p style="font-size: 0.8rem; color: #94a3b8; line-height: 1.5; margin-bottom: 14px;">
+          В верхней панели управления расположены 3 фундаментальные кнопки для полного цикла работы с задачами:
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;">
+          <!-- Button 1: Add -->
+          <div style="background: #141842; border: 1px solid rgba(99, 102, 241, 0.35); border-radius: 12px; padding: 14px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <div style="width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px;">
+                +
+              </div>
+              <strong style="color: #c7d2fe; font-size: 0.95rem;">1. Кнопка «Добавить»</strong>
+            </div>
+            <p style="font-size: 0.77rem; color: #cbd5e1; line-height: 1.45; margin: 0;">
+              Открывает окно создания новой задачи. Вы можете ввести своё название, выбрать одну из 5 категорий (Промптинг, Вайб, Шиппинг, Кофе, Тюнинг), указать сложность и время. Внутри окна есть кнопка <strong>«🎲 Сгенерировать»</strong>, которая мгновенно подставляет случайную задачу из базы 180+.
+            </p>
+          </div>
+
+          <!-- Button 2: Delete -->
+          <div style="background: #1f1228; border: 1px solid rgba(244, 63, 94, 0.35); border-radius: 12px; padding: 14px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(244, 63, 94, 0.25); color: #fda4af; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+                🗑️
+              </div>
+              <strong style="color: #fda4af; font-size: 0.95rem;">2. Кнопка «Удалить»</strong>
+            </div>
+            <p style="font-size: 0.77rem; color: #cbd5e1; line-height: 1.45; margin: 0;">
+              Умное меню очистки:
+              <br>• <strong>Удалить только выполненные</strong> — в 1 клик стирает все завершенные пункты с галочками.
+              <br>• <strong>Очистить весь список полностью</strong> — полный сброс для старта чистого дня.
+              <br>• Также у каждой отдельной задачи есть индивидуальная кнопка удаления 🗑️.
+            </p>
+          </div>
+
+          <!-- Button 3: Save -->
+          <div style="background: #0f1d33; border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 14px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(16, 185, 129, 0.25); color: #6ee7b7; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+                💾
+              </div>
+              <strong style="color: #6ee7b7; font-size: 0.95rem;">3. Кнопка «Сохранить»</strong>
+            </div>
+            <p style="font-size: 0.77rem; color: #cbd5e1; line-height: 1.45; margin: 0;">
+              Мгновенно формирует и скачивает на ваш компьютер локальный JSON-файл <code style="color: #c4b5fd; font-family: monospace; background: #0c0f2b; padding: 2px 5px; border-radius: 4px;">tasks_ГГГГ-ММ-ДД.json</code>. Вы можете положить его в проект VS Code для Cursor/Copilot. Кроме того, состояние автоматически сохраняется в памяти браузера.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. ИНСТРУКЦИЯ ПО ГЕНЕРАТОРУ ЗАДАЧ НА ДЕНЬ -->
+      <div class="main-actions-card" style="margin-bottom: 16px;">
+        <h4 style="font-size: 0.95rem; font-weight: 800; color: #fff; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;">
+          <span style="width: 26px; height: 26px; border-radius: 8px; background: rgba(168, 85, 247, 0.25); color: #d8b4fe; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800;">2</span>
+          <span>Инструкция по генератору задач на день (Вайб Кодинг & 180+ задач)</span>
+        </h4>
+        <p style="font-size: 0.8rem; color: #94a3b8; line-height: 1.5; margin-bottom: 12px;">
+          В программу встроена обширная база из <strong>более 180 уникальных задач</strong> по теме вайб-кодинга, достаточная на 30+ дней продуктивной работы без повторений! Генератор помогает быстро построить план дня:
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 12px;">
+          <div style="background: #141840; border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 10px; padding: 12px;">
+            <strong style="color: #d8b4fe; font-size: 0.82rem; display: block; margin-bottom: 4px;">🎧 Ультра Вайб Кодинг (AI Flow)</strong>
+            <span style="font-size: 0.73rem; color: #cbd5e1; line-height: 1.35; display: block;">
+              Идеальный баланс: включить Lo-Fi, составить мастер-промпт, сгенерировать UI, кофе-брейк и зашипить MVP.
+            </span>
+          </div>
+
+          <div style="background: #0f1f2f; border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 12px;">
+            <strong style="color: #6ee7b7; font-size: 0.82rem; display: block; margin-bottom: 4px;">🚀 Быстрый Шиппинг MVP за день</strong>
+            <span style="font-size: 0.73rem; color: #cbd5e1; line-height: 1.35; display: block;">
+              Максимальный темп запуска: формулирование задачи, быстрая кодогенерация, smoke-тесты и моментальный деплой.
+            </span>
+          </div>
+
+          <div style="background: #241334; border: 1px solid rgba(236, 72, 153, 0.25); border-radius: 10px; padding: 12px;">
+            <strong style="color: #f472b6; font-size: 0.82rem; display: block; margin-bottom: 4px;">🌙 Ночной Неоновый Хакатон</strong>
+            <span style="font-size: 0.73rem; color: #cbd5e1; line-height: 1.35; display: block;">
+              Поздняя продуктивность: полумрак, неоновая подсветка, фокусная музыка, сложные алгоритмы и победный пуш в git.
+            </span>
+          </div>
+
+          <div style="background: #1a1740; border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 10px; padding: 12px;">
+            <strong style="color: #a5b4fc; font-size: 0.82rem; display: block; margin-bottom: 4px;">✨ Вайб-тюнинг и эстетика UI</strong>
+            <span style="font-size: 0.73rem; color: #cbd5e1; line-height: 1.35; display: block;">
+              Красота и порядок: настройка темы VS Code, микро-анимации, исправление варнингов линтера и оформление README.
+            </span>
+          </div>
+        </div>
+
+        <div style="background: #0b0e27; border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 10px; padding: 12px; font-size: 0.77rem; color: #c4b5fd;">
+          💡 <strong>Кнопки генерации на вкладке «Задачи дня»:</strong>
+          <br>• <strong>«⚡ Сгенерировать»</strong> — создаёт готовый сбалансированный сценарий из 6 задач (по одной из каждой категории).
+          <br>• <strong>«+ Дополнить»</strong> — добавляет случайную новую задачу в конец списка, сохраняя уже сделанные.
+          <br>• <strong>«🎲 180+»</strong> — мгновенно добавляет наверх списка случайную задачу из полной базы 180+ идей.
+        </div>
+      </div>
+
+      <!-- 3. ЧЕКБОКСЫ И НАЧИСЛЕНИЕ БАЛЛОВ -->
+      <div class="main-actions-card" style="margin-bottom: 16px;">
+        <h4 style="font-size: 0.95rem; font-weight: 800; color: #fff; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;">
+          <span style="width: 26px; height: 26px; border-radius: 8px; background: rgba(168, 85, 247, 0.25); color: #d8b4fe; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800;">3</span>
+          <span>Чекбоксы и начисление баллов («Скилл» & «Вайб»)</span>
+        </h4>
+        <p style="font-size: 0.8rem; color: #94a3b8; line-height: 1.5; margin-bottom: 12px;">
+          Слева от каждой задачи расположен интерактивный <strong>квадратный чекбокс</strong>. Когда вы кликаете по чекбоксу или названию задачи:
+        </p>
+
+        <div style="background: #0f1338; border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 12px; padding: 14px; margin-bottom: 14px;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <div style="width: 22px; height: 22px; border-radius: 7px; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: bold;">
+              ✓
+            </div>
+            <strong style="color: #fff; font-size: 0.88rem;">Механика работы чекбокса:</strong>
+          </div>
+          <ul style="margin: 0; padding-left: 20px; font-size: 0.77rem; color: #cbd5e1; line-height: 1.55;">
+            <li>Задача перечёркивается и подсвечивается как выполненная.</li>
+            <li>Прогресс-бар дня в шапке увеличивает процент завершения.</li>
+            <li>Вам <strong>мгновенно начисляются XP</strong> в ветки «Скилл» и «Вайб» с учётом категории и сложности.</li>
+            <li>В правом нижнем углу всплывает уведомление с точным количеством полученных очков.</li>
+            <li>В разделе «Прокачка» автоматически растёт уровень звания, двигается полоска опыта и пополняется «История начисления баллов».</li>
+            <li>Если снять галочку — очки корректно вычитаются назад.</li>
+          </ul>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 14px;">
+          <!-- Skill branch -->
+          <div style="background: linear-gradient(135deg, #13173d, #0e1230); border: 1px solid rgba(99, 102, 241, 0.4); border-radius: 12px; padding: 14px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span style="font-size: 16px;">⚡</span>
+              <strong style="color: #818cf8; font-size: 0.88rem;">Шкала «СКИЛЛ» (Умение вайб-кодинга)</strong>
+            </div>
+            <p style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.4; margin-bottom: 8px;">
+              Отражает скилл постановки промптов, работу с AI, проектирование архитектуры и шиппинг готового продукта.
+            </p>
+            <div style="font-size: 0.73rem; color: #a5b4fc; background: #0c0f2b; padding: 8px 10px; border-radius: 8px;">
+              <strong>5 рангов прокачки:</strong>
+              <br>1. Промпт-новичок (0 XP)
+              <br>2. AI-Подмастерье (60 XP)
+              <br>3. Вайб-Архитектор (150 XP)
+              <br>4. Нейро-Шиппер (300 XP)
+              <br>5. 🏆 Грандмастер Вайба (500+ XP)
+            </div>
+          </div>
+
+          <!-- Vibe branch -->
+          <div style="background: linear-gradient(135deg, #1e1338, #120e28); border: 1px solid rgba(236, 72, 153, 0.4); border-radius: 12px; padding: 14px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span style="font-size: 16px;">☕</span>
+              <strong style="color: #f472b6; font-size: 0.88rem;">Шкала «ВАЙБ» (Отдых, поток и чилл)</strong>
+            </div>
+            <p style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.4; margin-bottom: 8px;">
+              Отражает ментальное здоровье кодера: предотвращение выгорания, кофе-паузы, музыка и комфортная обстановка.
+            </p>
+            <div style="font-size: 0.73rem; color: #fbcfe8; background: #1c0e2a; padding: 8px 10px; border-radius: 8px;">
+              <strong>5 рангов прокачки:</strong>
+              <br>1. Кофейный старт (0 XP)
+              <br>2. Слушатель Lo-Fi (60 XP)
+              <br>3. В потоке / In Flow (150 XP)
+              <br>4. Дзен-разработчик (300 XP)
+              <br>5. ☕ Повелитель Потока (500+ XP)
+            </div>
+          </div>
+        </div>
+
+        <!-- Multipliers -->
+        <div style="background: #0d1028; border: 1px solid rgba(168, 85, 247, 0.25); border-radius: 10px; padding: 12px; font-size: 0.77rem; color: #cbd5e1;">
+          <strong style="color: #d8b4fe;">Множители очков в зависимости от сложности (приоритета):</strong>
+          <br>• 🔥 <strong>Топ вайб (Высокая сложность):</strong> даёт <strong>×1.5</strong> ко всем начисляемым очкам.
+          <br>• ⚡ <strong>В потоке (Средняя сложность):</strong> даёт <strong>×1.2</strong> ко всем начисляемым очкам.
+          <br>• ☕ <strong>Чилл (Базовая сложность):</strong> стандартные базовые <strong>×1.0</strong> очков.
+        </div>
+      </div>
+
+      <!-- 4. ИНСТРУКЦИЯ ПОЛЬЗОВАНИЯ В VS CODE -->
+      <div class="main-actions-card">
+        <h4 style="font-size: 0.95rem; font-weight: 800; color: #fff; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;">
+          <span style="width: 26px; height: 26px; border-radius: 8px; background: rgba(168, 85, 247, 0.25); color: #d8b4fe; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800;">4</span>
+          <span>Инструкция пользования в VS Code & Работа с tasks.json</span>
+        </h4>
+        <p style="font-size: 0.8rem; color: #94a3b8; line-height: 1.5; margin-bottom: 12px;">
+          Этот файл представляет собой автономное решение <strong>«Всё в одном» (HTML + CSS + JavaScript)</strong>, которое готово к запуску в VS Code без настройки Node.js или веб-серверов:
+        </p>
+
+        <div style="background: #141840; border: 1px solid rgba(99, 102, 241, 0.35); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
+          <strong style="color: #c7d2fe; font-size: 0.85rem; display: block; margin-bottom: 6px;">🚀 Как запустить файл в VS Code:</strong>
+          <ol style="margin: 0; padding-left: 20px; font-size: 0.77rem; color: #cbd5e1; line-height: 1.6;">
+            <li>Сохраните этот файл как <code style="color: #c4b5fd; font-family: monospace;">index.html</code> (или <code style="color: #c4b5fd; font-family: monospace;">vibe_planner.html</code>) в вашей рабочей папке VS Code.</li>
+            <li>Установите расширение <strong>Live Server</strong> в VS Code (если ещё не установлено).</li>
+            <li>Кликните правой кнопкой мыши по файлу <code style="color: #c4b5fd; font-family: monospace;">index.html</code> в проводнике VS Code и выберите <strong>«Open with Live Server»</strong>.</li>
+            <li>(Или просто дважды кликните по файлу в проводнике Windows/Mac — он сразу откроется в браузере!).</li>
+          </ol>
+        </div>
+
+        <div style="background: #0d1028; border: 1px solid rgba(168, 85, 247, 0.25); border-radius: 10px; padding: 12px; font-size: 0.77rem; color: #cbd5e1;">
+          <strong style="color: #d8b4fe;">📁 Как использовать tasks.json в связке с AI в VS Code:</strong>
+          <br>1. Нажмите зелёную кнопку <strong>«💾 Сохранить»</strong> в приложении.
+          <br>2. Переместите скачанный JSON-файл в корень проекта в VS Code и переименуйте в <code style="color: #c4b5fd; font-family: monospace;">tasks.json</code>.
+          <br>3. Теперь в Cursor, GitHub Copilot или Claude вы можете написать: <em>«Посмотри задачи на сегодня в tasks.json и помоги выполнить текущую невыполненную задачу»</em>!
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: TOOLS & AI DIRECTORY -->
+    <div id="tab-tools" style="display: none;">
+      <!-- Кнопка перед первым окном "Арсенал Вайб-Кодера": Обязательно к прочтению -->
+      <div style="background: linear-gradient(90deg, rgba(69, 26, 3, 0.7), rgba(88, 28, 135, 0.5), rgba(30, 27, 75, 0.75)); border: 2px solid rgba(245, 158, 11, 0.7); border-radius: 16px; padding: 14px 18px; margin-bottom: 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.2);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b, #e11d48); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);">
+            ⚠️
+          </div>
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+              <span style="background: #fbbf24; color: #000; font-size: 0.65rem; font-weight: 900; padding: 2px 8px; border-radius: 20px; text-transform: uppercase;">
+                Обязательно новичку
+              </span>
+              <span style="font-size: 0.75rem; color: #fde68a; font-weight: 600;">Важное напутствие перед стартом</span>
+            </div>
+            <h4 style="font-size: 0.95rem; font-weight: 800; color: #fff; margin: 0;">
+              Не спеши платить за платные ИИ: открой памятку вайб-кодера!
+            </h4>
+          </div>
+        </div>
+        <button type="button" id="btnOpenManifestoModal" class="btn-primary" style="background: linear-gradient(90deg, #f59e0b, #f43f5e, #9333ea); border: none; padding: 10px 20px; font-size: 0.82rem; font-weight: 800; border-radius: 12px; box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4); cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+          <span>📖 Обязательно к прочтению</span>
+        </button>
+      </div>
+
+      <!-- Hero Banner -->
+      <section class="main-actions-card" style="background: linear-gradient(135deg, #12163b, #101333, #1c0f38); border-color: rgba(139, 92, 246, 0.4); position: relative; overflow: hidden;">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.4); color: #c4b5fd; font-size: 0.75rem; font-weight: 700; width: fit-content;">
+            <span>✨</span> <span>Арсенал Вайб-Кодера: от Новичка до Про</span>
+          </div>
+          <h3 style="font-size: 1.25rem; font-weight: 900; color: #fff; margin: 4px 0 0 0;">
+            🛠️ Инструменты, Сайты и ИИ для Вайб-Кодинга
+          </h3>
+          <p style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.5; margin: 0;">
+            Полная подборка для работы в потоке: по 3 топовых бесплатных и платных ИИ (включая <strong style="color: #fbbf24;">Google AI Studio</strong>, на котором спроектирован этот проект), а также рабочие ссылки на загрузку программ для ПК (VS Code, Node.js, Git) и платформ деплоя. Справа от каждого пункта находится кнопка прямого перехода.
+          </p>
+        </div>
+      </section>
+
+      <!-- Category Filter Chips and Search -->
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; background: #0f1230; border: 1px solid var(--border-color); border-radius: 14px; padding: 12px; margin-bottom: 16px;">
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;" id="toolCategoryFilters">
+          <button class="status-tab active tool-filter-btn" data-tool-cat="all">Все (12)</button>
+          <button class="status-tab tool-filter-btn" data-tool-cat="ai-free">3 Бесплатных ИИ</button>
+          <button class="status-tab tool-filter-btn" data-tool-cat="ai-paid">3 Платных ИИ</button>
+          <button class="status-tab tool-filter-btn" data-tool-cat="software">Программы для ПК (3)</button>
+          <button class="status-tab tool-filter-btn" data-tool-cat="deploy">Деплой & Хостинг (3)</button>
+        </div>
+        <div style="min-width: 200px;">
+          <input type="text" id="toolSearchInput" placeholder="🔍 Поиск инструмента..." style="width: 100%; font-size: 0.8rem; padding: 7px 12px;">
+        </div>
+      </div>
+
+      <!-- Tools List Container -->
+      <div id="toolsListContainer">
+        <!-- 1. Google AI Studio (Gemini) - SELF ENGINE -->
+        <article class="tool-card tool-highlight" data-category="ai-free" data-search="google ai studio gemini бесплатный искусственный интеллект промпт создатель">
+          <div class="tool-info">
+            <div class="tool-badges">
+              <span class="tool-tag tool-tag-gold">⭐ Движок этого проекта!</span>
+              <span class="tool-tag" style="background: rgba(99,102,241,0.25); color: #c4b5fd; border: 1px solid rgba(99,102,241,0.4);">Бесплатный ИИ</span>
+              <span class="tool-tag" style="background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4);">Бесплатно</span>
+              <span class="tool-tag" style="background: rgba(245,158,11,0.2); color: #fde047; border: 1px solid rgba(245,158,11,0.4);">★ Разработано тут</span>
+            </div>
+            <div>
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 4px 0;">Google AI Studio (Gemini)</h4>
+              <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.45; margin: 0;">
+                Официальная веб-среда Google для работы с флагманскими моделями Gemini 1.5 Pro и Flash. Огромное контекстное окно до 2 000 000 токенов, мгновенная генерация целых веб-приложений и скриптов прямо по текстовому описанию.
+              </p>
+            </div>
+            <div class="tool-features">
+              <span class="tool-feat-chip">✓ Контекст 2M токенов (целые кодовые базы)</span>
+              <span class="tool-feat-chip">✓ Генерация готовых веб-страниц</span>
+              <span class="tool-feat-chip">✓ Бесплатный доступ к новейшим моделям Gemini</span>
+            </div>
+            <div class="tool-tip-box" style="background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.3); color: #fef3c7;">
+              <strong>⚡ Вайб-совет:</strong> Именно в этой среде был создан проект, который вы сейчас открыли! Идеально для вайб-кодинга.
+            </div>
+          </div>
+          <div class="tool-action-col">
+            <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" class="tool-visit-btn btn-gold">
+              <span>Открыть AI Studio</span>
+              <span>↗</span>
+            </a>
+            <div class="tool-url-preview">
+              <span>aistudio.google.com</span>
+              <button type="button" class="btn-copy-tool-url" data-copy="https://aistudio.google.com/" style="background: transparent; border: none; color: #a78bfa; cursor: pointer; font-size: 0.75rem;">📋</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 2. ChatGPT (OpenAI) -->
+        <article class="tool-card" data-category="ai-free" data-search="chatgpt openai чатгпт бесплатный ии нейросеть">
+          <div class="tool-info">
+            <div class="tool-badges">
+              <span class="tool-tag tool-tag-green">Бесплатный доступ</span>
+              <span class="tool-tag" style="background: rgba(99,102,241,0.25); color: #c4b5fd; border: 1px solid rgba(99,102,241,0.4);">Бесплатный ИИ</span>
+              <span class="tool-tag" style="background: rgba(59,130,246,0.2); color: #93c5fd; border: 1px solid rgba(59,130,246,0.4);">Freemium</span>
+            </div>
+            <div>
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 4px 0;">ChatGPT (OpenAI)</h4>
+              <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.45; margin: 0;">
+                Самый популярный ИИ-чат для поиска ошибок, объяснения логики кода, генерации сниппетов и планирования фич. В бесплатном тарифе доступны современные быстрые модели GPT-4o mini.
+              </p>
+            </div>
+            <div class="tool-features">
+              <span class="tool-feat-chip">✓ Быстрые ответы и разбор ошибок в коде</span>
+              <span class="tool-feat-chip">✓ Генерация JSON, CSS стилей и функций</span>
+              <span class="tool-feat-chip">✓ Объяснение сложных терминов простыми словами</span>
+            </div>
+            <div class="tool-tip-box">
+              <strong>⚡ Вайб-совет:</strong> Вставляйте в чат текст ошибки терминала — ChatGPT быстро объяснит, какой пакет забыли установить.
+            </div>
+          </div>
+          <div class="tool-action-col">
+            <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" class="tool-visit-btn">
+              <span>Открыть ChatGPT</span>
+              <span>↗</span>
+            </a>
+            <div class="tool-url-preview">
+              <span>chatgpt.com</span>
+              <button type="button" class="btn-copy-tool-url" data-copy="https://chatgpt.com/" style="background: transparent; border: none; color: #a78bfa; cursor: pointer; font-size: 0.75rem;">📋</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 3. v0 by Vercel -->
+        <article class="tool-card" data-category="ai-free" data-search="v0 vercel генератор интерфейсов react ui tailwind css">
+          <div class="tool-info">
+            <div class="tool-badges">
+              <span class="tool-tag tool-tag-blue">UI Генератор</span>
+              <span class="tool-tag" style="background: rgba(99,102,241,0.25); color: #c4b5fd; border: 1px solid rgba(99,102,241,0.4);">Бесплатный ИИ</span>
+              <span class="tool-tag" style="background: rgba(59,130,246,0.2); color: #93c5fd; border: 1px solid rgba(59,130,246,0.4);">Freemium</span>
+            </div>
+            <div>
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 4px 0;">v0 by Vercel</h4>
+              <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.45; margin: 0;">
+                Генеративный ИИ от создателей Next.js, заточенный под верстку веб-интерфейсов на React, Tailwind CSS и Shadcn UI. Генерирует интерактивные компоненты с живым просмотром на лету.
+              </p>
+            </div>
+            <div class="tool-features">
+              <span class="tool-feat-chip">✓ Моментальная верстка красивых интерфейсов</span>
+              <span class="tool-feat-chip">✓ Экспорт чистого кода в React / JSX</span>
+              <span class="tool-feat-chip">✓ Бесплатный пул кредитов каждый месяц</span>
+            </div>
+            <div class="tool-tip-box">
+              <strong>⚡ Вайб-совет:</strong> Опишите словами желаемый экран или карточку — v0 выдаст чистый код с Tailwind стилями.
+            </div>
+          </div>
+          <div class="tool-action-col">
+            <a href="https://v0.dev/" target="_blank" rel="noopener noreferrer" class="tool-visit-btn btn-blue">
+              <span>Открыть v0.dev</span>
+              <span>↗</span>
+            </a>
+            <div class="tool-url-preview">
+              <span>v0.dev</span>
+              <button type="button" class="btn-copy-tool-url" data-copy="https://v0.dev/" style="background: transparent; border: none; color: #a78bfa; cursor: pointer; font-size: 0.75rem;">📋</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 4. Cursor IDE (Paid / Pro) -->
+        <article class="tool-card" data-category="ai-paid" data-search="cursor ide редактор курсор искусственный интеллект pro платный">
+          <div class="tool-info">
+            <div class="tool-badges">
+              <span class="tool-tag tool-tag-purple">🔥 Топ выбор вайб-кодера</span>
+              <span class="tool-tag" style="background: rgba(168,85,247,0.25); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.4);">Платный / Pro ИИ</span>
+              <span class="tool-tag" style="background: rgba(236,72,153,0.2); color: #f472b6; border: 1px solid rgba(236,72,153,0.4);">Подписка / Pro</span>
+            </div>
+            <div>
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 4px 0;">Cursor IDE</h4>
+              <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.45; margin: 0;">
+                Революционный AI-редактор кода на базе VS Code. Функция Composer переписывает сразу несколько файлов проекта, автодополнение предсказывает следующие строки кода на лету, а чат видит весь ваш репозиторий.
+              </p>
+            </div>
+            <div class="tool-features">
+              <span class="tool-feat-chip">✓ Глубокая индексация всей кодовой базы</span>
+              <span class="tool-feat-chip">✓ Composer для одновременной правки файлов</span>
+              <span class="tool-feat-chip">✓ Поддержка Claude 3.5 Sonnet и GPT-4o</span>
+            </div>
+            <div class="tool-tip-box">
+              <strong>⚡ Вайб-совет:</strong> Нажмите Cmd+I (или Ctrl+I) прямо в файле и напишите на русском, что изменить — редактор сделает diff.
+            </div>
+          </div>
+          <div class="tool-action-col">
+            <a href="https://www.cursor.com/" target="_blank" rel="noopener noreferrer" class="tool-visit-btn btn-pink">
+              <span>Скачать Cursor</span>
+              <span>↗</span>
+            </a>
+            <div class="tool-url-preview">
+              <span>cursor.com</span>
+              <button type="button" class="btn-copy-tool-url" data-copy="https://www.cursor.com/" style="background: transparent; border: none; color: #a78bfa; cursor: pointer; font-size: 0.75rem;">📋</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 5. Claude Pro (Anthropic) -->
+        <article class="tool-card" data-category="ai-paid" data-search="claude pro anthropic клори сонет sonnet 3.5 платный">
+          <div class="tool-info">
+            <div class="tool-badges">
+              <span class="tool-tag tool-tag-gold">👑 Лучший кодер Sonnet 3.5</span>
+              <span class="tool-tag" style="background: rgba(168,85,247,0.25); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.4);">Платный / Pro ИИ</span>
+              <span class="tool-tag" style="background: rgba(236,72,153,0.2); color: #f472b6; border: 1px solid rgba(236,72,153,0.4);">Подписка / Pro</span>
+            </div>
+            <div>
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 4px 0;">Claude Pro (Anthropic)</h4>
+              <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.45; margin: 0;">
+                Флагманские модели Claude 3.5 Sonnet признаны программистами лучшими по чистоте кода, рефакторингу и отсутствию багов. В Pro-версии доступны интерактивные артефакты и увеличенные лимиты.
+              </p>
+            </div>
+            <div class="tool-features">
+              <span class="tool-feat-chip">✓ Выдающееся качество кода и архитектуры</span>
+              <span class="tool-feat-chip">✓ Интерактивные Artifacts с живым запуском</span>
+              <span class="tool-feat-chip">✓ Создание проектов с персональным контекстом</span>
+            </div>
+            <div class="tool-tip-box">
+              <strong>⚡ Вайб-совет:</strong> Отлично справляется с масштабным рефакторингом и превращением сырых идей в аккуратную архитектуру.
+            </div>
+          </div>
+          <div class="tool-action-col">
+            <a href="https://claude.ai/" target="_blank" rel="noopener noreferrer" class="tool-visit-btn btn-pink">
+              <span>Перейти в Claude</span>
+              <span>↗</span>
+            </a>
+            <div class="tool-url-preview">
+              <span>claude.ai</span>
+              <button type="button" class="btn-copy-tool-url" data-copy="https://claude.ai/" style="background: transparent; border: none; color: #a78bfa; cursor: pointer; font-size: 0.75rem;">📋</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 6. GitHub Copilot -->
+        <article class="tool-card" data-category="ai-paid" data-search="github copilot копайлот гитхаб ассистент vs code автокомплит">
+          <div class="tool-info">
+            <div class="tool-badges">
+              <span class="tool-tag tool-tag-purple">Официальный напарник</span>
+              <span class="tool-tag" style="background: rgba(168,85,247,0.25); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.4);">Платный / Pro ИИ</span>
+              <span class="tool-tag" style="background: rgba(236,72,153,0.2); color: #f472b6; border: 1px solid rgba(236,72,153,0.4);">Подписка / Pro</span>
+            </div>
+            <div>
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 4px 0;">GitHub Copilot</h4>
+              <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.45; margin: 0;">
+                Официальный AI-ассистент от GitHub и Microsoft, встроенный прямо в VS Code, JetBrains и терминал. Предлагает варианты целых функций прямо в процессе набора текста по нажатию клавиши Tab.
+              </p>
+            </div>
+            <div class="tool-features">
+              <span class="tool-feat-chip">✓ Нативная интеграция во все редакторы кода</span>
+              <span class="tool-feat-chip">✓ Copilot Chat в боковой панели VS Code</span>
+              <span class="tool-feat-chip">✓ Генерация тестов и документации в 1 клик</span>
+            </div>
+            <div class="tool-tip-box">
+              <strong>⚡ Вайб-совет:</strong> Начните писать комментарий // функция для фильтрации задач и нажмите Tab для автодополнения.
+            </div>
+          </div>
+          <div class="tool-action-col">
+            <a href="https://github.com/features/copilot" target="_blank" rel="noopener noreferrer" class="tool-visit-btn">
+              <span>Подключить Copilot</span>
+              <span>↗</span>
+            </a>
+            <div class="tool-url-preview">
+              <span>github.com/features/copilot</span>
+              <button type="button" class="btn-copy-tool-url" data-copy="https://github.com/features/copilot" style="background: transparent; border: none; color: #a78bfa; cursor: pointer; font-size: 0.75rem;">📋</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 7. Visual Studio Code -->
+        <article class="tool-card" data-category="software" data-search="visual studio code vscode вс код редактор скачать программа пк">
+          <div class="tool-info">
+            <div class="tool-badges">
+              <span class="tool-tag tool-tag-blue">Must Have редактор</span>
+              <span class="tool-tag" style="background: rgba(59,130,246,0.25); color: #93c5fd; border: 1px solid rgba(59,130,246,0.4);">Программа для ПК</span>
+              <span class="tool-tag" style="background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4);">Бесплатно</span>
+            </div>
+            <div>
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 4px 0;">Visual Studio Code (VS Code)</h4>
+              <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.45; margin: 0;">
+                Самый удобный и популярный редактор кода в мире. Встроенный терминал, подсветка синтаксиса для всех языков, тысячи расширений (Live Server, Prettier, GitLens) и идеальная интеграция с ИИ.
+              </p>
+            </div>
+            <div class="tool-features">
+              <span class="tool-feat-chip">✓ Встроенный терминал и Git</span>
+              <span class="tool-feat-chip">✓ Поддержка HTML, CSS, JS, TypeScript, Python</span>
+              <span class="tool-feat-chip">✓ Огромная экосистема расширений</span>
+            </div>
+            <div class="tool-tip-box">
+              <strong>⚡ Вайб-совет:</strong> Скачайте расширение Live Server в VS Code, чтобы открывать HTML файлы с мгновенным автообновлением.
+            </div>
+          </div>
+          <div class="tool-action-col">
+            <a href="https://code.visualstudio.com/" target="_blank" rel="noopener noreferrer" class="tool-visit-btn btn-blue">
+              <span>Скачать VS Code</span>
+              <span>↗</span>
+            </a>
+            <div class="tool-url-preview">
+              <span>code.visualstudio.com</span>
+              <button type="button" class="btn-copy-tool-url" data-copy="https://code.visualstudio.com/" style="background: transparent; border: none; color: #a78bfa; cursor: pointer; font-size: 0.75rem;">📋</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 8. Node.js & npm -->
+        <article class="tool-card" data-category="software" data-search="node.js nodejs npm нода скрипты запуск программа пк скачать">
+          <div class="tool-info">
+            <div class="tool-badges">
+              <span class="tool-tag tool-tag-green">Среда запуска JS</span>
+              <span class="tool-tag" style="background: rgba(59,130,246,0.25); color: #93c5fd; border: 1px solid rgba(59,130,246,0.4);">Программа для ПК</span>
+              <span class="tool-tag" style="background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4);">Бесплатно (LTS)</span>
+            </div>
+            <div>
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 4px 0;">Node.js & npm</h4>
+              <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.45; margin: 0;">
+                Серверная среда выполнения JavaScript и пакетный менеджер npm. Необходима для запуска современных фронтенд-проектов (React, Vite, Next.js), сборки кода и установки библиотек.
+              </p>
+            </div>
+            <div class="tool-features">
+              <span class="tool-feat-chip">✓ Пакетный менеджер npm с миллионами библиотек</span>
+              <span class="tool-feat-chip">✓ Запуск локальных серверов разработки</span>
+              <span class="tool-feat-chip">✓ Основа для работы Vite, Tailwind и React</span>
+            </div>
+            <div class="tool-tip-box">
+              <strong>⚡ Вайб-совет:</strong> Для новичков всегда выбирайте версию LTS (Long Term Support) — она самая стабильная.
+            </div>
+          </div>
+          <div class="tool-action-col">
+            <a href="https://nodejs.org/" target="_blank" rel="noopener noreferrer" class="tool-visit-btn" style="background: linear-gradient(90deg, #15803d, #059669); border-color: rgba(34,197,94,0.5);">
+              <span>Скачать Node.js</span>
+              <span>↗</span>
+            </a>
+            <div class="tool-url-preview">
+              <span>nodejs.org</span>
+              <button type="button" class="btn-copy-tool-url" data-copy="https://nodejs.org/" style="background: transparent; border: none; color: #a78bfa; cursor: pointer; font-size: 0.75rem;">📋</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 9. Git -->
+        <article class="tool-card" data-category="software" data-search="git гит контроль версий репозиторий скачать программа пк">
+          <div class="tool-info">
+            <div class="tool-badges">
+              <span class="tool-tag" style="background: linear-gradient(90deg, #ea580c, #dc2626); color: #fff;">Контроль версий</span>
+              <span class="tool-tag" style="background: rgba(59,130,246,0.25); color: #93c5fd; border: 1px solid rgba(59,130,246,0.4);">Программа для ПК</span>
+              <span class="tool-tag" style="background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4);">Бесплатно</span>
+            </div>
+            <div>
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 4px 0;">Git SCM</h4>
+              <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.45; margin: 0;">
+                Мировой стандарт контроля версий. Позволяет сохранять снимки состояния проекта, откатывать неудачные эксперименты одной командой и публиковать код на GitHub.
+              </p>
+            </div>
+            <div class="tool-features">
+              <span class="tool-feat-chip">✓ История каждого изменения в вашем коде</span>
+              <span class="tool-feat-chip">✓ Возможность безопасно экспериментировать в ветках</span>
+              <span class="tool-feat-chip">✓ Прямая синхронизация с облачным GitHub</span>
+            </div>
+            <div class="tool-tip-box">
+              <strong>⚡ Вайб-совет:</strong> Если вайб-кодинг пошел не туда, git checkout . вернет все в исходное рабочее состояние за секунду.
+            </div>
+          </div>
+          <div class="tool-action-col">
+            <a href="https://git-scm.com/" target="_blank" rel="noopener noreferrer" class="tool-visit-btn" style="background: linear-gradient(90deg, #ea580c, #b91c1c); border-color: rgba(234,88,12,0.5);">
+              <span>Скачать Git</span>
+              <span>↗</span>
+            </a>
+            <div class="tool-url-preview">
+              <span>git-scm.com</span>
+              <button type="button" class="btn-copy-tool-url" data-copy="https://git-scm.com/" style="background: transparent; border: none; color: #a78bfa; cursor: pointer; font-size: 0.75rem;">📋</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 10. GitHub -->
+        <article class="tool-card" data-category="deploy" data-search="github гитхаб репозиторий портфолио деплой хостинг облако">
+          <div class="tool-info">
+            <div class="tool-badges">
+              <span class="tool-tag" style="background: linear-gradient(90deg, #334155, #0f172a); color: #fff;">Портфолио & Код</span>
+              <span class="tool-tag" style="background: rgba(148,163,184,0.2); color: #cbd5e1; border: 1px solid rgba(148,163,184,0.4);">Облако и код</span>
+              <span class="tool-tag" style="background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4);">Бесплатно</span>
+            </div>
+            <div>
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 4px 0;">GitHub</h4>
+              <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.45; margin: 0;">
+                Главный дом для проектов разработчиков всего мира. Храните свои репозитории в облаке, показывайте свои работы друзьям и работодателям, делитесь открытым исходным кодом.
+              </p>
+            </div>
+            <div class="tool-features">
+              <span class="tool-feat-chip">✓ Бесплатные публичные и приватные репозитории</span>
+              <span class="tool-feat-chip">✓ GitHub Pages для публикации сайтов</span>
+              <span class="tool-feat-chip">✓ Удобный веб-редактор кода по нажатию клавиши "."</span>
+            </div>
+            <div class="tool-tip-box">
+              <strong>⚡ Вайб-совет:</strong> Создайте аккаунт и загрузите ваш первый файл vibe_planner.html, чтобы запустить личный GitHub портфолио.
+            </div>
+          </div>
+          <div class="tool-action-col">
+            <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="tool-visit-btn" style="background: linear-gradient(90deg, #1e293b, #334155); border-color: rgba(148,163,184,0.5);">
+              <span>Перейти на GitHub</span>
+              <span>↗</span>
+            </a>
+            <div class="tool-url-preview">
+              <span>github.com</span>
+              <button type="button" class="btn-copy-tool-url" data-copy="https://github.com/" style="background: transparent; border: none; color: #a78bfa; cursor: pointer; font-size: 0.75rem;">📋</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 11. Vercel -->
+        <article class="tool-card" data-category="deploy" data-search="vercel версель деплой хостинг облако сайт публикация">
+          <div class="tool-info">
+            <div class="tool-badges">
+              <span class="tool-tag tool-tag-purple">Моментальный сайт</span>
+              <span class="tool-tag" style="background: rgba(168,85,247,0.25); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.4);">Деплой в 1 клик</span>
+              <span class="tool-tag" style="background: rgba(59,130,246,0.2); color: #93c5fd; border: 1px solid rgba(59,130,246,0.4);">Freemium</span>
+            </div>
+            <div>
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 4px 0;">Vercel</h4>
+              <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.45; margin: 0;">
+                Самая легкая облачная платформа для публикации веб-приложений. Подключите ваш GitHub репозиторий, и Vercel автоматически опубликует сайт в интернете с бесплатным SSL-сертификатом и HTTPS.
+              </p>
+            </div>
+            <div class="tool-features">
+              <span class="tool-feat-chip">✓ Автоматический деплой при каждом коммите</span>
+              <span class="tool-feat-chip">✓ Бесплатный домен your-project.vercel.app</span>
+              <span class="tool-feat-chip">✓ Мгновенная скорость загрузки по всему миру</span>
+            </div>
+            <div class="tool-tip-box">
+              <strong>⚡ Вайб-совет:</strong> Сделайте git push — и через 20 секунд ваш вайб-проект доступен любому пользователю в интернете.
+            </div>
+          </div>
+          <div class="tool-action-col">
+            <a href="https://vercel.com/" target="_blank" rel="noopener noreferrer" class="tool-visit-btn">
+              <span>Перейти на Vercel</span>
+              <span>↗</span>
+            </a>
+            <div class="tool-url-preview">
+              <span>vercel.com</span>
+              <button type="button" class="btn-copy-tool-url" data-copy="https://vercel.com/" style="background: transparent; border: none; color: #a78bfa; cursor: pointer; font-size: 0.75rem;">📋</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 12. StackBlitz -->
+        <article class="tool-card" data-category="deploy" data-search="stackblitz стекблитц онлайн ide без установки браузер">
+          <div class="tool-info">
+            <div class="tool-badges">
+              <span class="tool-tag tool-tag-blue">Онлайн IDE</span>
+              <span class="tool-tag" style="background: rgba(99,102,241,0.25); color: #c4b5fd; border: 1px solid rgba(99,102,241,0.4);">Без установки на ПК</span>
+              <span class="tool-tag" style="background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4);">Бесплатно</span>
+            </div>
+            <div>
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 4px 0;">StackBlitz</h4>
+              <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.45; margin: 0;">
+                Полноценная среда разработки VS Code и Node.js, работающая прямо внутри вкладки браузера на движке WebContainers. Запускайте React и Node проекты без установки чего-либо на компьютер.
+              </p>
+            </div>
+            <div class="tool-features">
+              <span class="tool-feat-chip">✓ Запуск Node.js прямо в браузере за 2 секунды</span>
+              <span class="tool-feat-chip">✓ Привычный интерфейс Visual Studio Code</span>
+              <span class="tool-feat-chip">✓ Легко делиться ссылкой на работающий код</span>
+            </div>
+            <div class="tool-tip-box">
+              <strong>⚡ Вайб-совет:</strong> Идеально, если вы работаете со слабого ноутбука или чужого компьютера и хотите быстро покодить.
+            </div>
+          </div>
+          <div class="tool-action-col">
+            <a href="https://stackblitz.com/" target="_blank" rel="noopener noreferrer" class="tool-visit-btn btn-blue">
+              <span>Открыть StackBlitz</span>
+              <span>↗</span>
+            </a>
+            <div class="tool-url-preview">
+              <span>stackblitz.com</span>
+              <button type="button" class="btn-copy-tool-url" data-copy="https://stackblitz.com/" style="background: transparent; border: none; color: #a78bfa; cursor: pointer; font-size: 0.75rem;">📋</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Quick Beginner Setup Guide -->
+      <section class="main-actions-card" style="margin-top: 20px;">
+        <h4 style="font-size: 0.95rem; font-weight: 800; color: #fff; margin: 0 0 8px 0; display: flex; align-items: center; gap: 8px;">
+          <span>⚡</span>
+          <span>Стартовый рецепт для новичка (Идеальный сетап за 5 минут)</span>
+        </h4>
+        <p style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 12px;">
+          Чтобы превратить этот проект в вашу стартовую площадку для вайб-кодинга, выполните 3 простых шага:
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
+          <div style="background: #141840; border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 12px;">
+            <div style="font-weight: 700; color: #c4b5fd; font-size: 0.82rem; margin-bottom: 4px;">1. Редактор кода</div>
+            <div style="font-size: 0.76rem; color: #94a3b8;">Установите <strong>VS Code</strong> или <strong>Cursor</strong>. Откройте в нем рабочую папку с вашими проектами.</div>
+          </div>
+          <div style="background: #141840; border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 12px;">
+            <div style="font-weight: 700; color: #818cf8; font-size: 0.82rem; margin-bottom: 4px;">2. Среда Node.js</div>
+            <div style="font-size: 0.76rem; color: #94a3b8;">Установите <strong>Node.js LTS</strong>. Встроенный npm позволит ставить библиотеки и запускать локальные серверы.</div>
+          </div>
+          <div style="background: #141840; border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 12px;">
+            <div style="font-weight: 700; color: #f472b6; font-size: 0.82rem; margin-bottom: 4px;">3. ИИ Напарник</div>
+            <div style="font-size: 0.76rem; color: #94a3b8;">Используйте <strong>Google AI Studio</strong> или Claude для формулирования промптов, генерации фич и обучения.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 5: THEMES & STYLING -->
+    <div id="tab-themes" style="display: none;">
+      <!-- Hero Banner -->
+      <section class="main-actions-card" style="background: linear-gradient(135deg, #17123d, #121538, #2a0f35); border-color: rgba(236, 72, 153, 0.4);">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; background: rgba(236, 72, 153, 0.2); border: 1px solid rgba(236, 72, 153, 0.4); color: #f472b6; font-size: 0.75rem; font-weight: 700; width: fit-content;">
+            <span>🎨</span> <span>Виды оформления вайб-кодера</span>
+          </div>
+          <h3 style="font-size: 1.25rem; font-weight: 900; color: #fff; margin: 4px 0 0 0;">
+            Виды оформления интерфейса
+          </h3>
+          <p style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.5; margin: 0;">
+            Выберите желаемую эстетику. Переключение тем мгновенное и сохраняется в локальной памяти браузера. Блок обязательного напутствия для новичка остаётся защищённым во всех режимах.
+          </p>
+        </div>
+      </section>
+
+      <!-- 4 Themes Grid -->
+      <div class="theme-grid">
+        <!-- 1. Авторский (Default) -->
+        <div class="theme-card active-theme" data-theme-id="author">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0;">1. Авторский</h4>
+              <span style="font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 12px; background: rgba(139, 92, 246, 0.2); color: #c4b5fd; border: 1px solid rgba(139, 92, 246, 0.3);">По умолчанию</span>
+            </div>
+            <p style="font-size: 0.78rem; color: #94a3b8; line-height: 1.45; margin: 0 0 10px 0;">
+              Тот, что стоит по умолчанию. Глубокий космический индиго-фон, градиенты фиолетового, изумрудного и розового. Идеально для ночного потока.
+            </p>
+            <div style="background: #0a0d1e; border: 1px solid #242b6b; border-radius: 10px; padding: 10px; margin-bottom: 10px;">
+              <div style="font-size: 0.75rem; color: #f1f5f9; font-weight: 600; margin-bottom: 4px;">⚡ Собрать AI проект</div>
+              <div style="font-size: 0.7rem; color: #a5b4fc;">+20 Скилл • +15 Вайб</div>
+            </div>
+            <div class="swatch-row">
+              <div class="swatch-dot" style="background: #0a0d1e;" title="#0a0d1e"></div>
+              <div class="swatch-dot" style="background: #111538;" title="#111538"></div>
+              <div class="swatch-dot" style="background: #8b5cf6;" title="#8b5cf6"></div>
+              <div class="swatch-dot" style="background: #ec4899;" title="#ec4899"></div>
+              <div class="swatch-dot" style="background: #10b981;" title="#10b981"></div>
+            </div>
+          </div>
+          <button type="button" class="btn-main btn-theme-select" data-theme-target="author" style="background: #6366f1; color: #fff; border: none; padding: 10px;">
+            ✓ Тема активна
+          </button>
+        </div>
+
+        <!-- 2. Хакер (Matrix Black & Acid Green) -->
+        <div class="theme-card" data-theme-id="hacker">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0;">2. Хакер</h4>
+              <span style="font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 12px; background: #052e16; color: #00ff66; border: 1px solid #00ff66;">Matrix Terminal</span>
+            </div>
+            <p style="font-size: 0.78rem; color: #94a3b8; line-height: 1.45; margin: 0 0 10px 0;">
+              Все кубы и фон меняются на чистый чёрный (#000000). Окантовка всех блоков, текст и иконки становятся кислотно-зелёными (#00ff66).
+            </p>
+            <div style="background: #000000; border: 1px solid #00ff66; border-radius: 10px; padding: 10px; margin-bottom: 10px;">
+              <div style="font-size: 0.75rem; color: #00ff66; font-weight: 600; font-family: monospace; margin-bottom: 4px;">> root@vibe: solve_bug</div>
+              <div style="font-size: 0.7rem; color: #00ff66; opacity: 0.8;">[OK] +20 SKILL • +15 VIBE</div>
+            </div>
+            <div class="swatch-row">
+              <div class="swatch-dot" style="background: #000000;" title="#000000"></div>
+              <div class="swatch-dot" style="background: #050505;" title="#050505"></div>
+              <div class="swatch-dot" style="background: #00ff66;" title="#00ff66"></div>
+              <div class="swatch-dot" style="background: #15803d;" title="#15803d"></div>
+            </div>
+          </div>
+          <button type="button" class="btn-main btn-theme-select" data-theme-target="hacker" style="background: #141840; color: #c4b5fd; border: 1px solid var(--border-color); padding: 10px;">
+            Выбрать эту тему
+          </button>
+        </div>
+
+        <!-- 3. Ангел (White / Gray + Gold) -->
+        <div class="theme-card" data-theme-id="angel">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0;">3. Ангел</h4>
+              <span style="font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 12px; background: #fef08a; color: #713f12; border: 1px solid #eab308;">Светлая • Золото</span>
+            </div>
+            <p style="font-size: 0.78rem; color: #94a3b8; line-height: 1.45; margin: 0 0 10px 0;">
+              Блоки и фон меняют цвет на чистый белый (#ffffff) и серый (#f1f5f9). Окантовка блоков, цвет текста и иконки становятся золотисто-жёлтыми.
+            </p>
+            <div style="background: #ffffff; border: 1px solid #eab308; border-radius: 10px; padding: 10px; margin-bottom: 10px;">
+              <div style="font-size: 0.75rem; color: #854d0e; font-weight: 700; margin-bottom: 4px;">✨ Чистый поток вдохновения</div>
+              <div style="font-size: 0.7rem; color: #ca8a04;">+20 Скилл • +15 Вайб</div>
+            </div>
+            <div class="swatch-row">
+              <div class="swatch-dot" style="background: #ffffff;" title="#ffffff"></div>
+              <div class="swatch-dot" style="background: #f1f5f9;" title="#f1f5f9"></div>
+              <div class="swatch-dot" style="background: #fef08a;" title="#fef08a"></div>
+              <div class="swatch-dot" style="background: #eab308;" title="#eab308"></div>
+              <div class="swatch-dot" style="background: #854d0e;" title="#854d0e"></div>
+            </div>
+          </div>
+          <button type="button" class="btn-main btn-theme-select" data-theme-target="angel" style="background: #141840; color: #c4b5fd; border: 1px solid var(--border-color); padding: 10px;">
+            Выбрать эту тему
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Live Test Playground in Themes tab -->
+      <section class="main-actions-card" style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color);">
+          <div>
+            <h4 style="font-size: 0.95rem; font-weight: 700; color: #fff; margin: 0;">Интерактивный тест текущего оформления</h4>
+            <div style="font-size: 0.75rem; color: #94a3b8;">Проверьте, как выглядит чекбокс и карточка при активной теме</div>
+          </div>
+          <button type="button" id="btnResetToAuthorTheme" class="btn-main" style="background: #181d45; color: #c4b5fd; border: 1px solid var(--border-color); padding: 6px 12px; font-size: 0.75rem;">
+            Вернуть Авторский
+          </button>
+        </div>
+
+        <div class="task-item" id="demoThemeItem" style="margin-bottom: 0;">
+          <div class="task-left">
+            <div class="task-checkbox" id="demoThemeCheckbox"></div>
+            <div>
+              <div class="task-title" id="demoThemeTitle">Тестовая задача: поймать глубокий фокус и кайфовать от кода</div>
+              <div class="task-meta">
+                <span class="badge" style="background: rgba(139, 92, 246, 0.2); color: #c4b5fd;">⚡ Промптинг & AI</span>
+                <span style="color: #a5b4fc;">⏰ 14:00 - 15:30</span>
+                <span class="xp-badge">+20 Скилл • +15 Вайб</span>
+              </div>
+            </div>
+          </div>
+          <button type="button" id="demoThemeToggleBtn" class="btn-main" style="background: #6366f1; color: #fff; border: none; padding: 6px 14px; font-size: 0.78rem;">
+            Завершить
+          </button>
+        </div>
+      </section>
+
+      <!-- Preserved Manifesto Notice -->
+      <div class="manifesto-card manifesto-preserved" data-preserve-theme="true" style="background: linear-gradient(90deg, rgba(69, 26, 3, 0.7), rgba(88, 28, 135, 0.5), rgba(30, 27, 75, 0.75)); border: 2px solid rgba(245, 158, 11, 0.8); border-radius: 16px; padding: 14px 18px; margin-top: 18px; display: flex; align-items: center; gap: 12px;">
+        <div style="width: 40px; height: 40px; border-radius: 12px; background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.5); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+          🔒
+        </div>
+        <div>
+          <div style="font-size: 0.7rem; font-weight: 800; color: #fbbf24; text-transform: uppercase;">
+            Защищённый блок по ТЗ
+          </div>
+          <div style="font-size: 0.8rem; color: #fde68a; line-height: 1.4;">
+            Блок с текстом обязательным к прочтению (напутствие новичку и модальное окно) сохраняет свой оригинальный янтарный цвет во всех темах без изменений.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MANIFESTO MODAL (Обязательно к прочтению) -->
+  <div id="manifestoModal" class="modal-overlay manifesto-preserved" data-preserve-theme="true">
+    <div class="modal-box" data-preserve-theme="true" style="max-width: 650px; border: 2px solid rgba(245, 158, 11, 0.7); box-shadow: 0 25px 50px -12px rgba(88, 28, 135, 0.7);">
+      <div class="modal-header" style="border-bottom: 1px solid rgba(99, 102, 241, 0.3); padding-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.5); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+            ⚠️
+          </div>
+          <div>
+            <div style="font-size: 0.65rem; font-weight: 800; color: #fbbf24; text-transform: uppercase; letter-spacing: 0.05em;">
+              Памятка Вайб-Кодера • Обязательно к прочтению
+            </div>
+            <h4 style="font-size: 1rem; font-weight: 900; color: #fff; margin: 2px 0 0 0;">
+              Обращение к начинающему вайб-кодеру
+            </h4>
+          </div>
+        </div>
+        <button class="delete-item-btn closeModalBtn" style="font-size: 22px;">&times;</button>
+      </div>
+
+      <div class="modal-body" style="gap: 16px;">
+        <div style="background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(139, 92, 246, 0.12)); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 14px; padding: 16px; color: #fef3c7; line-height: 1.6; font-size: 0.88rem; display: flex; flex-direction: column; gap: 12px;">
+          <p style="margin: 0; font-weight: 700; color: #fde047; font-size: 1rem;">
+            привет! перед началом обязательно прочти этот текст.
+          </p>
+          <p style="margin: 0;">
+            Перед началом работы вайбкодера знай, что тебе не нужно сразу платить огромные деньги за крутые ИИ модели, для начала поработай с базой, обязательно спрашивай у агентов за что отвечает та, или иная строчка кода, без понимания своих инструментов далеко не уйдешь.
+          </p>
+          <p style="margin: 0;">
+            Всегда проверяй каждую линию и каждую кнопку перед следующим шагом, иначе все сломается и починить уже будет намного сложнее! освоился? создавай портфолио, добавь туда пару своих проектов, покажи свои навыки, и только теперь можешь пробовать выйти в продажи.
+          </p>
+          <div style="margin: 0; padding-top: 10px; border-top: 1px solid rgba(245, 158, 11, 0.25); font-style: italic; color: #fef08a; font-size: 0.8rem;">
+            (п.с. используй платные ИИ если ты уже создал достаточно много проектов и понимаешь код, а еще лучше когда выйдешь в продажи)
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px;">
+          <div style="background: #141840; border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 10px; padding: 10px;">
+            <div style="font-size: 0.78rem; font-weight: 700; color: #d8b4fe; margin-bottom: 3px;">1. Начни с базы</div>
+            <div style="font-size: 0.72rem; color: #94a3b8; line-height: 1.4;">Бесплатных моделей хватает для обучения и десятков первых проектов.</div>
+          </div>
+          <div style="background: #141840; border: 1px solid rgba(99, 102, 241, 0.35); border-radius: 10px; padding: 10px;">
+            <div style="font-size: 0.78rem; font-weight: 700; color: #818cf8; margin-bottom: 3px;">2. Понимай код</div>
+            <div style="font-size: 0.72rem; color: #94a3b8; line-height: 1.4;">Спрашивай у агента суть строк и проверяй каждую кнопку перед шагом.</div>
+          </div>
+          <div style="background: #141840; border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 10px;">
+            <div style="font-size: 0.78rem; font-weight: 700; color: #fde047; margin-bottom: 3px;">3. Продажи позже</div>
+            <div style="font-size: 0.72rem; color: #94a3b8; line-height: 1.4;">Оформи 2-3 кейса в портфолио, и лишь потом бери платные ИИ и заказы.</div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 4px;">
+          <button type="button" class="btn-primary closeModalBtn" style="background: linear-gradient(90deg, #f59e0b, #f43f5e, #9333ea); border: none; padding: 10px 22px; font-size: 0.85rem; font-weight: 800; border-radius: 12px; cursor: pointer;">
+            Я прочитал и понял! Погнали 🚀
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD TASK MODAL -->
+  <div id="addModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h4 style="font-size: 0.95rem; font-weight: 700;">➕ Добавить задачу (База: 180+)</h4>
+        <button class="delete-item-btn closeModalBtn" style="font-size: 20px;">&times;</button>
+      </div>
+      <form id="addForm" class="modal-body">
+        <div style="display: flex; gap: 8px; justify-content: space-between; align-items: center; background: #0c0f28; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-color);">
+          <span style="font-size: 0.8rem; color: #c4b5fd;">🎲 Случайная из базы 180+:</span>
+          <button type="button" id="btnModalRandom" class="btn-gen" style="padding: 6px 12px; font-size: 0.75rem;">
+            Сгенерировать
+          </button>
+        </div>
+        <div>
+          <label style="font-size: 0.75rem; color: #cbd5e1; display: block; margin-bottom: 4px;">Название задачи *</label>
+          <input type="text" id="taskTitleInput" required placeholder="Например: Сформулировать мастер-промпт" style="width: 100%;">
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <div style="flex: 1;">
+            <label style="font-size: 0.75rem; color: #cbd5e1; display: block; margin-bottom: 4px;">Категория</label>
+            <select id="taskCategorySelect" style="width: 100%;">
+              <option value="prompting">⚡ Промптинг & AI</option>
+              <option value="flow">🎧 Вайб & Фокус</option>
+              <option value="shipping">🚀 Шиппинг & Деплой</option>
+              <option value="fuel">☕ Кофе & Топливо</option>
+              <option value="tuning">✨ Тюнинг & UI</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <label style="font-size: 0.75rem; color: #cbd5e1; display: block; margin-bottom: 4px;">Сложность</label>
+            <select id="taskPrioritySelect" style="width: 100%;">
+              <option value="high">🔥 Топ вайб (Высокая)</option>
+              <option value="medium" selected>⚡ В потоке (Средняя)</option>
+              <option value="low">☕ Чилл (Базовая)</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label style="font-size: 0.75rem; color: #cbd5e1; display: block; margin-bottom: 4px;">Время (необязательно)</label>
+          <input type="time" id="taskTimeInput" style="width: 100%;">
+        </div>
+        <div class="modal-footer" style="padding: 10px 0 0 0; background: transparent; border: none;">
+          <button type="button" class="btn-append closeModalBtn">Отмена</button>
+          <button type="submit" class="btn-main btn-add" style="padding: 8px 16px;">Добавить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DELETE MODAL -->
+  <div id="deleteModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h4 style="font-size: 0.95rem; font-weight: 700; color: #fda4af;">🗑️ Удаление задач</h4>
+        <button class="delete-item-btn closeModalBtn" style="font-size: 20px;">&times;</button>
+      </div>
+      <div class="modal-body">
+        <button id="btnDeleteCompleted" class="btn-main btn-delete" style="width: 100%; justify-content: flex-start;">
+          ✔️ Удалить только выполненные задачи
+        </button>
+        <button id="btnClearAll" class="btn-main btn-delete" style="width: 100%; justify-content: flex-start; background: #3b101f; border-color: #f43f5e;">
+          ⚠️ Очистить весь список полностью
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- JAVASCRIPT WITH 180+ VIBE CODING TASKS -->
+  <script>
+    const STORAGE_KEY = 'vibe_tasks_standalone_v3';
+    const CATEGORIES = {
+      prompting: { label: 'Промптинг & AI', icon: '⚡', class: 'badge-prompting', baseSkill: 28, baseVibe: 10 },
+      flow: { label: 'Вайб & Фокус', icon: '🎧', class: 'badge-flow', baseSkill: 10, baseVibe: 30 },
+      shipping: { label: 'Шиппинг & Деплой', icon: '🚀', class: 'badge-shipping', baseSkill: 35, baseVibe: 12 },
+      fuel: { label: 'Кофе & Топливо', icon: '☕', class: 'badge-fuel', baseSkill: 4, baseVibe: 36 },
+      tuning: { label: 'Тюнинг & UI', icon: '✨', class: 'badge-tuning', baseSkill: 20, baseVibe: 16 }
+    };
+
+    // БОЛЬШАЯ БАЗА ИЗ 180+ УНИКАЛЬНЫХ ЗАДАЧ (НА ВСЕ 30+ ДНЕЙ)
+    const VIBE_POOL_180 = [
+      { title: "Сформулировать мастер-промпт для архитектуры фичи", category: "prompting", priority: "high", time: "10:30" },
+      { title: "Описать системную роль Senior Fullstack разработчика для AI", category: "prompting", priority: "medium", time: "11:00" },
+      { title: "Попросить AI декомпозировать сложную логику на микро-функции", category: "prompting", priority: "high", time: "11:30" },
+      { title: "Сгенерировать моковые данные в формате JSON через один промпт", category: "prompting", priority: "medium", time: "12:00" },
+      { title: "Скормить AI стек-трейс ошибки и запросить пошаговый фикс", category: "prompting", priority: "high", time: "14:00" },
+      { title: "Написать мета-промпт для автоматического создания unit-тестов", category: "prompting", priority: "medium", time: "14:30" },
+      { title: "Попросить модель провести аудит безопасности пользовательского ввода", category: "prompting", priority: "high", time: "15:00" },
+      { title: "Сгенерировать схему базы данных и связи таблиц через AI", category: "prompting", priority: "medium", time: "15:30" },
+      { title: "Составить промпт для оптимизации алгоритмической сложности (O(n))", category: "prompting", priority: "high", time: "16:00" },
+      { title: "Попросить AI переписать код на современный декларативный синтаксис", category: "prompting", priority: "medium", time: "16:30" },
+      { title: "Сгенерировать регулярное выражение с подробными комментариями", category: "prompting", priority: "low", time: "17:00" },
+      { title: "Использовать AI для генерации понятных Docstrings и документации", category: "prompting", priority: "low", time: "17:30" },
+      { title: "Настроить системный контекст в .cursorrules для идеальных ответов", category: "prompting", priority: "medium", time: "18:00" },
+      { title: "Попросить модель предложить 3 альтернативные архитектуры проекта", category: "prompting", priority: "high", time: "18:30" },
+      { title: "Оформить цепочку промптов (Chain-of-Thought) для сложного рефакторинга", category: "prompting", priority: "high", time: "19:00" },
+      { title: "Включить Lo-Fi / Synthwave плейлист и поймать рабочий вайб", category: "flow", priority: "medium", time: "10:00" },
+      { title: "Перевести редактор в Zen Mode (скрыть все лишние панели)", category: "flow", priority: "low", time: "10:15" },
+      { title: "Установить таймер Pomodoro на 45 минут чистого потока", category: "flow", priority: "medium", time: "10:45" },
+      { title: "Приглушить свет в комнате и включить неоновую подсветку", category: "flow", priority: "low", time: "11:15" },
+      { title: "Отключить все уведомления в мессенджерах на 2 часа", category: "flow", priority: "high", time: "12:00" },
+      { title: "Навести идеальный порядок на рабочем столе и очистить Загрузки", category: "flow", priority: "low", time: "13:30" },
+      { title: "Сделать бэкап и сохранить чистую ветку в git перед экспериментами", category: "flow", priority: "medium", time: "14:00" },
+      { title: "Очистить контекстное окно AI-ассистента для свежих ответов", category: "flow", priority: "low", time: "15:00" },
+      { title: "Настроить кастомную тему и шрифты с лигатурами в VS Code", category: "flow", priority: "low", time: "15:45" },
+      { title: "Записать голосовую заметку с идеями для проекта во время паузы", category: "flow", priority: "medium", time: "16:30" },
+      { title: "Поставить стакан воды у клавиатуры и проверить осанку", category: "flow", priority: "low", time: "17:00" },
+      { title: "Провести 30 минут в режиме «no-interruptions focus»", category: "flow", priority: "high", time: "17:30" },
+      { title: "Переслушать космический эмбиент для глубокой концентрации", category: "flow", priority: "low", time: "18:15" },
+      { title: "Сохранить лучшие промпты недели в персональный snippets-файл", category: "flow", priority: "medium", time: "19:00" },
+      { title: "Подвести итоги сессии кодинга и закрыть лишние вкладки", category: "flow", priority: "low", time: "20:00" },
+      { title: "Зашипить рабочий MVP в прод и проверить live превью", category: "shipping", priority: "high", time: "12:30" },
+      { title: "Настроить автоматический деплой через GitHub Actions / Vercel", category: "shipping", priority: "high", time: "13:00" },
+      { title: "Сделать финальный smoke-тест всех ключевых сценариев", category: "shipping", priority: "high", time: "14:15" },
+      { title: "Снять 60-секундное видео-демо работающего функционала", category: "shipping", priority: "medium", time: "15:15" },
+      { title: "Оформить красивый README.md со скриншотами и гифками", category: "shipping", priority: "medium", time: "16:00" },
+      { title: "Опубликовать анонс релиза в профильном комьюнити разработчиков", category: "shipping", priority: "medium", time: "16:45" },
+      { title: "Добавить favicon, OpenGraph-теги и превью для соцсетей", category: "shipping", priority: "low", time: "17:15" },
+      { title: "Проверить адаптивность вёрстки на мобильных экранах перед релизом", category: "shipping", priority: "high", time: "17:45" },
+      { title: "Настроить базовый сбор ошибок и аналитику посещений", category: "shipping", priority: "medium", time: "18:15" },
+      { title: "Создать релизный тег v1.0.0 в Git и написать Release Notes", category: "shipping", priority: "high", time: "18:45" },
+      { title: "Проверить работу приложения без интернета (offline mode)", category: "shipping", priority: "medium", time: "19:15" },
+      { title: "Оптимизировать скорость загрузки страницы (Lighthouse score > 90)", category: "shipping", priority: "high", time: "19:45" },
+      { title: "Запустить проект на облачном хостинге и протестировать ссылку", category: "shipping", priority: "high", time: "20:15" },
+      { title: "Отправить ссылку на проект 3 друзьям для первого фидбека", category: "shipping", priority: "low", time: "20:45" },
+      { title: "Заварить свежий фильтр-кофе или ароматный матча", category: "fuel", priority: "low", time: "09:45" },
+      { title: "Сделать 10-минутную разминку для шеи, плеч и поясницы", category: "fuel", priority: "medium", time: "11:15" },
+      { title: "Выпить два стакана чистой воды с лимоном для бодрости", category: "fuel", priority: "low", time: "12:00" },
+      { title: "Сделать гимнастику для глаз (правило 20-20-20)", category: "fuel", priority: "medium", time: "13:15" },
+      { title: "Пройтись 15 минут быстрым шагом на свежем воздухе", category: "fuel", priority: "high", time: "14:30" },
+      { title: "Полезный перекус: орехи, фрукты или протеиновый батончик", category: "fuel", priority: "low", time: "15:30" },
+      { title: "Проветрить комнату и наполнить рабочее место свежим воздухом", category: "fuel", priority: "low", time: "16:15" },
+      { title: "Пять минут осознанного дыхания для снятия напряжения", category: "fuel", priority: "medium", time: "17:00" },
+      { title: "Перезагрузка мозга: послушать 1 любимый трек без экранов", category: "fuel", priority: "low", time: "18:00" },
+      { title: "Контрастный душ или умывание прохладной водой", category: "fuel", priority: "medium", time: "19:00" },
+      { title: "Сделать легкую растяжку спины на коврике", category: "fuel", priority: "low", time: "20:00" },
+      { title: "Выпить травяной чай для спокойного сна после хакатона", category: "fuel", priority: "low", time: "22:00" },
+      { title: "Убрать смартфон в другую комнату на время отдыха", category: "fuel", priority: "high", time: "23:00" },
+      { title: "Скормить ошибки линтера в AI и принять чистые диффы", category: "tuning", priority: "high", time: "10:45" },
+      { title: "Добавить мягкий стеклянный эффект (glassmorphism) и блюр фона", category: "tuning", priority: "medium", time: "11:45" },
+      { title: "Настроить плавные motion-анимации появления элементов", category: "tuning", priority: "medium", time: "12:45" },
+      { title: "Добавить тактильные hover-эффекты и микро-анимации на кнопки", category: "tuning", priority: "medium", time: "13:45" },
+      { title: "Проверить контрастность текста на сине-фиолетовой палитре", category: "tuning", priority: "medium", time: "14:45" },
+      { title: "Заменить стандартные чекбоксы на анимированные кастомные", category: "tuning", priority: "low", time: "15:45" },
+      { title: "Оптимизировать размер бандла и удалить неиспользуемые импорты", category: "tuning", priority: "high", time: "16:45" },
+      { title: "Добавить аккуратные скелетоны (skeleton loader) при загрузке", category: "tuning", priority: "medium", time: "17:45" },
+      { title: "Проверить работу фокуса клавишей Tab для удобной навигации", category: "tuning", priority: "medium", time: "18:15" },
+      { title: "Настроить плавный скролл и кастомный тонкий скроллбар", category: "tuning", priority: "low", time: "18:45" },
+      { title: "Провести рефакторинг названий переменных по Clean Code", category: "tuning", priority: "high", time: "19:15" },
+      { title: "Добавить визуальный эффект вспышки при успешном действии", category: "tuning", priority: "low", time: "19:45" },
+      { title: "Оформить стильную страницу 404 с пасхалкой для пользователей", category: "tuning", priority: "medium", time: "20:30" },
+      { title: "Попросить AI найти скрытые краевые случаи (edge cases) в коде", category: "prompting", priority: "high", time: "11:15" },
+      { title: "Сгенерировать кастомный React hook для управления асинхронным стейтом", category: "prompting", priority: "medium", time: "12:15" },
+      { title: "Составить промпт для строгой TypeScript-типизации входящего payload", category: "prompting", priority: "high", time: "12:45" },
+      { title: "Попросить AI составить OpenAPI 3.0 спецификацию для backend роутов", category: "prompting", priority: "medium", time: "13:15" },
+      { title: "Создать промпт для автоматического перевода интерфейса на 3 языка", category: "prompting", priority: "low", time: "14:15" },
+      { title: "Скормить AI JSON-ответ внешнего API и сгенерировать точные DTO интерфейсы", category: "prompting", priority: "medium", time: "14:45" },
+      { title: "Попросить модель доступно объяснить сложный legacy-код", category: "prompting", priority: "low", time: "15:15" },
+      { title: "Составить промпт для выявления потенциальных утечек памяти (memory leaks)", category: "prompting", priority: "high", time: "15:45" },
+      { title: "Сгенерировать сложный SQL-запрос с JOIN и оконными функциями", category: "prompting", priority: "high", time: "16:15" },
+      { title: "Попросить AI написать сценарий сидирования тестовых данных (seeder)", category: "prompting", priority: "medium", time: "16:45" },
+      { title: "Создать промпт-шаблон для генерации осмысленных conventional commits", category: "prompting", priority: "low", time: "17:15" },
+      { title: "Попросить модель сравнить 2 библиотеки и взвесить их плюсы и минусы", category: "prompting", priority: "medium", time: "17:45" },
+      { title: "Сгенерировать строгую валидационную схему Zod из TypeScript типов", category: "prompting", priority: "medium", time: "18:15" },
+      { title: "Попросить AI предложить 5 улучшений UX для формы ввода", category: "prompting", priority: "low", time: "18:45" },
+      { title: "Написать промпт для создания мок-сервера на Express/MSW", category: "prompting", priority: "high", time: "19:15" },
+      { title: "Скормить медленный SQL запрос в AI и запросить план индексов", category: "prompting", priority: "high", time: "19:45" },
+      { title: "Попросить модель написать надежный regex для парсинга логов", category: "prompting", priority: "medium", time: "20:15" },
+      { title: "Сгенерировать набор негативных стресс-тестов на падение сервиса", category: "prompting", priority: "high", time: "20:45" },
+      { title: "Попросить модель составить пошаговый план миграции фреймворка", category: "prompting", priority: "high", time: "21:15" },
+      { title: "Настроить системный промпт для роли строжайшего Code Reviewer", category: "prompting", priority: "medium", time: "21:45" },
+      { title: "Попросить AI выявить неиспользуемые переменные и мертвый код", category: "prompting", priority: "low", time: "22:15" },
+      { title: "Создать промпт для автоматического формирования красивого Changelog", category: "prompting", priority: "low", time: "22:45" },
+      { title: "Настроить быстрые шорткаты в VS Code для вызова AI в один клик", category: "flow", priority: "medium", time: "10:15" },
+      { title: "Выделить 20 минут на изучение новой горячей фичи инструмента", category: "flow", priority: "low", time: "11:00" },
+      { title: "Сделать git stash и переключиться с ясной головой на критичный баг", category: "flow", priority: "high", time: "11:45" },
+      { title: "Расположить окна мониторов для бесшовного live preview интерфейса", category: "flow", priority: "low", time: "12:30" },
+      { title: "Включить фоновый шум дождя или потрескивание камина для уюта", category: "flow", priority: "low", time: "13:15" },
+      { title: "Очистить окно терминала (clear) и начать чистую сессию билда", category: "flow", priority: "low", time: "14:00" },
+      { title: "Записать ключевой инсайт дня в личный журнал вайб-разработчика", category: "flow", priority: "medium", time: "14:45" },
+      { title: "Настроить алиасы в bash/zsh для быстрых команд git checkout и commit", category: "flow", priority: "medium", time: "15:15" },
+      { title: "Провести 20 минут парного вайб-кодинга с коллегой по войсу", category: "flow", priority: "medium", time: "16:00" },
+      { title: "Сфокусироваться ровно на 1 фиче без переключения контекста", category: "flow", priority: "high", time: "16:30" },
+      { title: "Набросать схему взаимодействия компонентов в Excalidraw", category: "flow", priority: "medium", time: "17:15" },
+      { title: "Провести 15 минут в абсолютной тишине перед началом сложного спринта", category: "flow", priority: "low", time: "18:00" },
+      { title: "Подобрать цветовую схему терминала под неоновый стиль проекта", category: "flow", priority: "low", time: "18:30" },
+      { title: "Сделать промежуточный чекпоинт и порадоваться закрытым таскам", category: "flow", priority: "low", time: "19:15" },
+      { title: "Скрыть лишние значки из панели задач и трея операционки", category: "flow", priority: "low", time: "19:45" },
+      { title: "Включить в редакторе autosave on focus change для спокойствия", category: "flow", priority: "medium", time: "20:15" },
+      { title: "Собрать плейлист «Hyperfocus Flow» для сверхскоростного кодинга", category: "flow", priority: "low", time: "20:45" },
+      { title: "Проверить температуру в комнате и открыть окно для прохлады", category: "flow", priority: "low", time: "21:15" },
+      { title: "Зафиксировать текущий прогресс в Git и отпустить рабочие мысли", category: "flow", priority: "medium", time: "21:45" },
+      { title: "Сформулировать 3 главные цели на завтрашний утренний сеанс", category: "flow", priority: "low", time: "22:15" },
+      { title: "Очистить историю временных веток и удалить слитые branch-и", category: "flow", priority: "low", time: "22:45" },
+      { title: "Настроить кастомный домен и проверить выпуск SSL-сертификата (HTTPS)", category: "shipping", priority: "high", time: "11:00" },
+      { title: "Собрать production-билд локально и проверить отсутствие console.log", category: "shipping", priority: "high", time: "11:30" },
+      { title: "Добавить ссылку на исходный код в GitHub в футер приложения", category: "shipping", priority: "low", time: "12:00" },
+      { title: "Добавить открытую лицензию MIT и базовый кодекс поведения", category: "shipping", priority: "low", time: "13:00" },
+      { title: "Проверить кликабельность всех ссылок и внешних переходов", category: "shipping", priority: "medium", time: "13:45" },
+      { title: "Добавить красивый бейдж со статусом сборки в шапку репозитория", category: "shipping", priority: "low", time: "14:30" },
+      { title: "Настроить бесплатный uptime-мониторинг для проверки доступности прода", category: "shipping", priority: "medium", time: "15:00" },
+      { title: "Записать короткое видео с разбором ключевой фичи в Loom", category: "shipping", priority: "medium", time: "15:30" },
+      { title: "Опубликовать пост о релизе с тегом #buildinpublic и скриншотом", category: "shipping", priority: "medium", time: "16:00" },
+      { title: "Собрать первый фидбек от пользователей и структурировать в бэклог", category: "shipping", priority: "high", time: "16:30" },
+      { title: "Проверить gzip и brotli сжатие ассетов на сервере", category: "shipping", priority: "medium", time: "17:00" },
+      { title: "Настроить автоматический ежедневный бэкап пользовательских данных", category: "shipping", priority: "high", time: "17:30" },
+      { title: "Сгенерировать стильный баннер 1200x630 для превью в соцсетях", category: "shipping", priority: "low", time: "18:00" },
+      { title: "Протестировать отображение в Chrome, Safari и мобильном браузере", category: "shipping", priority: "high", time: "18:30" },
+      { title: "Проверить работу UI при эмуляции медленного 3G-интернета", category: "shipping", priority: "medium", time: "19:00" },
+      { title: "Настроить Telegram-бота для мгновенных уведомлений об ошибках 500", category: "shipping", priority: "high", time: "19:30" },
+      { title: "Подготовить черновик запуска на Product Hunt или профильном форуме", category: "shipping", priority: "medium", time: "20:00" },
+      { title: "Провести базовый нагрузочный тест эндпоинтов на 100 одновременных запросов", category: "shipping", priority: "high", time: "20:30" },
+      { title: "Зафиксировать ключевые метрики первой недели запуска проекта", category: "shipping", priority: "medium", time: "21:00" },
+      { title: "Написать честный пост-мортем с выводами первого запуска", category: "shipping", priority: "low", time: "21:30" },
+      { title: "Зашипить оперативный хотфикс v1.0.1 по первым отзывам", category: "shipping", priority: "high", time: "22:00" },
+      { title: "Отпраздновать успешный запуск чашкой отличного эспрессо или матча!", category: "shipping", priority: "low", time: "22:30" },
+      { title: "15-минутный power nap для быстрой перезагрузки оперативной памяти мозга", category: "fuel", priority: "high", time: "13:00" },
+      { title: "Сделать легкий самомассаж кистей рук и запястий от напряжения", category: "fuel", priority: "medium", time: "13:30" },
+      { title: "Поработать 30 минут стоя за подъемным столом или стойкой", category: "fuel", priority: "medium", time: "14:00" },
+      { title: "Заварить чашку горячего какао с корицей для поднятия настроения", category: "fuel", priority: "low", time: "14:30" },
+      { title: "Посмотреть в окно вдаль на линию горизонта ровно 3 минуты", category: "fuel", priority: "low", time: "15:00" },
+      { title: "Сделать 20 приседаний для разгона крови и бодрости", category: "fuel", priority: "medium", time: "15:30" },
+      { title: "Зажечь ароматическую свечу с нотками кедра или ванили", category: "fuel", priority: "low", time: "16:00" },
+      { title: "Полить комнатные растения и переключить визуальный фокус", category: "fuel", priority: "low", time: "16:30" },
+      { title: "Приготовить полноценный здоровый обед с белком и зеленью", category: "fuel", priority: "high", time: "17:00" },
+      { title: "Сделать паузу на приятный звонок другу или близким", category: "fuel", priority: "medium", time: "17:30" },
+      { title: "Протереть экран монитора и клавиатуру от пыли и отпечатков", category: "fuel", priority: "low", time: "18:00" },
+      { title: "Выпить стакан минеральной воды с электролитами для фокуса", category: "fuel", priority: "low", time: "18:30" },
+      { title: "Сделать упражнение «планка» на 60 секунд", category: "fuel", priority: "medium", time: "19:00" },
+      { title: "Посидеть в тишине с закрытыми глазами ровно 5 минут", category: "fuel", priority: "low", time: "19:30" },
+      { title: "Прогуляться быстрым шагом в ближайшем парке без телефона", category: "fuel", priority: "high", time: "20:00" },
+      { title: "Сделать мягкую суставную гимнастику для пальцев и плеч", category: "fuel", priority: "low", time: "20:30" },
+      { title: "Съесть порцию свежих ягод или кусочек темного шоколада", category: "fuel", priority: "low", time: "21:00" },
+      { title: "Включить увлажнитель воздуха для легкого дыхания в комнате", category: "fuel", priority: "low", time: "21:30" },
+      { title: "Сделать легкий точечный массаж висков для снятия усталости", category: "fuel", priority: "medium", time: "22:00" },
+      { title: "Завершить рабочий день вовремя и спланировать вкусный ужин", category: "fuel", priority: "high", time: "22:30" },
+      { title: "Лечь спать до полуночи, чтобы проснуться свежим и полным идей", category: "fuel", priority: "high", time: "23:30" },
+      { title: "Утренняя 7-минутная зарядка перед открытием крышки ноутбука", category: "fuel", priority: "medium", time: "09:00" },
+      { title: "Искренне похвалить себя за весь проделанный сегодня прогресс", category: "fuel", priority: "low", time: "23:45" },
+      { title: "Добавить мягкий звуковой клик (subtle audio) при выполнении задачи", category: "tuning", priority: "low", time: "11:00" },
+      { title: "Настроить адаптивную шкалу шрифтов (fluid typography) для мобильных", category: "tuning", priority: "medium", time: "11:30" },
+      { title: "Вынести повторяющиеся цвета и отступы в корневые CSS-переменные", category: "tuning", priority: "medium", time: "12:00" },
+      { title: "Оформить красивый Empty State со стильной неоновой иконкой", category: "tuning", priority: "low", time: "12:30" },
+      { title: "Добавить кнопку быстрого копирования текста в буфер с всплывающим бейджем", category: "tuning", priority: "low", time: "13:00" },
+      { title: "Сделать аккуратные всплывающие тултипы для иконок без подписей", category: "tuning", priority: "low", time: "13:30" },
+      { title: "Проверить читаемость цветов в симуляторе контрастности WCAG AAA", category: "tuning", priority: "medium", time: "14:00" },
+      { title: "Оптимизировать SVG иконки через SVGO для сокращения килобайтов", category: "tuning", priority: "low", time: "14:30" },
+      { title: "Добавить тактильный modal confirm перед опасными действиями", category: "tuning", priority: "medium", time: "15:00" },
+      { title: "Настроить приятный ripple-эффект при нажатии на интерактивные плитки", category: "tuning", priority: "low", time: "15:30" },
+      { title: "Заменить резкие переходы на мягкую кривую анимации cubic-bezier", category: "tuning", priority: "low", time: "16:00" },
+      { title: "Сделать умное скрытие шапки при скролле вниз и плавный возврат вверх", category: "tuning", priority: "medium", time: "16:30" },
+      { title: "Добавить миниатюрный бейдж версии v1.0 в правый нижний угол", category: "tuning", priority: "low", time: "17:00" },
+      { title: "Проверить отсутствие горизонтального оверскролла на экранах смартфонов", category: "tuning", priority: "high", time: "17:30" },
+      { title: "Добавить аккуратный индикатор процента заполненности профиля", category: "tuning", priority: "medium", time: "18:00" },
+      { title: "Настроить смену фавиконки при переключении между вкладками браузера", category: "tuning", priority: "low", time: "18:30" },
+      { title: "Добавить праздничный салют из конфетти при закрытии всех задач за день", category: "tuning", priority: "low", time: "19:00" },
+      { title: "Настроить закрытие всех модальных окон по нажатию клавиши Escape", category: "tuning", priority: "medium", time: "19:30" },
+      { title: "Добавить подсветку синтаксиса для блоков кода JSON в превью", category: "tuning", priority: "medium", time: "20:00" },
+      { title: "Проверить семантическую структуру HTML-тегов для доступности (a11y)", category: "tuning", priority: "medium", time: "20:30" },
+      { title: "Настроить поддержку мобильных свайпов для быстрого закрытия задач", category: "tuning", priority: "high", time: "21:00" },
+      { title: "Добавить аккуратный футер с ссылками на горячие клавиши", category: "tuning", priority: "low", time: "21:30" },
+      { title: "Финальный визуальный полишинг: тени, радиусы скругления и отступы", category: "tuning", priority: "high", time: "22:00" }
+    ];
+
+    let tasks = [];
+    let currentFilter = 'all';
+    let currentTheme = 'author';
+
+    function applyTheme(themeKey) {
+      currentTheme = themeKey;
+      document.body.dataset.theme = themeKey;
+      try {
+        localStorage.setItem('vibe_theme', themeKey);
+      } catch (e) {}
+
+      document.querySelectorAll('.theme-card').forEach(card => {
+        const isSelected = card.dataset.themeId === themeKey;
+        card.classList.toggle('active-theme', isSelected);
+        const btn = card.querySelector('.btn-theme-select');
+        if (btn) {
+          if (isSelected) {
+            btn.textContent = '✓ Тема активна';
+            btn.style.background = '#6366f1';
+            btn.style.color = '#fff';
+            btn.style.borderColor = 'transparent';
+          } else {
+            btn.textContent = 'Выбрать эту тему';
+            btn.style.background = '#141840';
+            btn.style.color = '#c4b5fd';
+            btn.style.borderColor = 'var(--border-color)';
+          }
+        }
+      });
+    }
+
+    function getRandomItem() {
+      const idx = Math.floor(Math.random() * VIBE_POOL_180.length);
+      return VIBE_POOL_180[idx];
+    }
+
+    function init() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) tasks = JSON.parse(saved);
+      } catch (e) {}
+
+      if (!tasks || tasks.length === 0) {
+        tasks = generatePresetTasks('random');
+      }
+
+      try {
+        const savedTheme = localStorage.getItem('vibe_theme');
+        if (savedTheme === 'author' || savedTheme === 'hacker' || savedTheme === 'angel') {
+          applyTheme(savedTheme);
+        } else {
+          applyTheme('author');
+        }
+      } catch (e) {}
+
+      setupEvents();
+      render();
+    }
+
+    function generatePresetTasks(presetKey) {
+      // Shuffled distinct 6 tasks from 180+
+      const shuffled = [...VIBE_POOL_180].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, 6);
+      selected.sort((a, b) => (a.time || '12:00').localeCompare(b.time || '12:00'));
+
+      const now = new Date().toISOString();
+      return selected.map((t, idx) => ({
+        id: 'vibe-' + Date.now() + '-' + idx,
+        title: t.title,
+        category: t.category,
+        priority: t.priority,
+        time: t.time || '',
+        completed: false,
+        createdAt: now
+      }));
+    }
+
+    const SKILL_LEVELS = [
+      { level: 1, title: 'Промпт-Новичок', minXp: 0, maxXp: 60, icon: '🌱', perk: 'Умеет составлять базовые промпты для AI' },
+      { level: 2, title: 'AI-Кодер', minXp: 60, maxXp: 140, icon: '⚡', perk: 'Разбирает ошибки линтера и принимает чистые диффы' },
+      { level: 3, title: 'Архитектор Промптов', minXp: 140, maxXp: 260, icon: '🧠', perk: 'Генерирует сложные модули и архитектуру без багов' },
+      { level: 4, title: '10x Vibe Engineer', minXp: 260, maxXp: 420, icon: '🔥', perk: 'Шипит фичи в прод в 5 раз быстрее обычной команды' },
+      { level: 5, title: 'Легенда Вайб-Кодинга', minXp: 420, maxXp: 600, icon: '👑', perk: 'Управляет кодом мыслью через идеальный контекст AI' }
+    ];
+
+    const VIBE_LEVELS = [
+      { level: 1, title: 'Кофейный старт', minXp: 0, maxXp: 60, icon: '☕', perk: 'Первая чашка кофе и настройка плейлиста' },
+      { level: 2, title: 'Слушатель Lo-Fi', minXp: 60, maxXp: 140, icon: '🎧', perk: 'Музыкальный поток блокирует внешние раздражители' },
+      { level: 3, title: 'Вайб-Сёрфер', minXp: 140, maxXp: 260, icon: '🌊', perk: 'Идеальный баланс работы, перекусов и разминки' },
+      { level: 4, title: 'Zen-Мастер Потока', minXp: 260, maxXp: 420, icon: '🧘', perk: 'Ноль стресса при любых багах, состояние полного дзэна' },
+      { level: 5, title: 'Абсолютная Нирвана', minXp: 420, maxXp: 600, icon: '✨', perk: 'Кодинг приносит чистое удовольствие и радость творчества' }
+    ];
+
+    function getLevelProgress(xp, levels) {
+      const safeXp = Math.max(0, xp);
+      const currentLevelIndex = levels.findIndex(lvl => safeXp >= lvl.minXp && safeXp < lvl.maxXp);
+      if (currentLevelIndex === -1) {
+        const last = levels[levels.length - 1];
+        return {
+          currentLevel: last,
+          nextLevel: null,
+          progressPercent: 100,
+          xpInCurrentLevel: safeXp,
+          neededForNext: 0,
+          isMax: true
+        };
+      }
+      const current = levels[currentLevelIndex];
+      const next = levels[currentLevelIndex + 1] || null;
+      const range = current.maxXp - current.minXp;
+      const currentInTier = safeXp - current.minXp;
+      const percent = Math.min(100, Math.max(0, Math.round((currentInTier / range) * 100)));
+
+      return {
+        currentLevel: current,
+        nextLevel: next,
+        progressPercent: percent,
+        xpInCurrentLevel: currentInTier,
+        neededForNext: Math.max(0, current.maxXp - safeXp),
+        isMax: false
+      };
+    }
+
+    function getAchievements(completedTasks, totalSkill, totalVibe) {
+      const hasShipping = completedTasks.some(t => t.category === 'shipping');
+      const hasPrompting = completedTasks.some(t => t.category === 'prompting');
+      const hasFuel = completedTasks.some(t => t.category === 'fuel');
+      const hasFlow = completedTasks.some(t => t.category === 'flow');
+      const hasTuning = completedTasks.some(t => t.category === 'tuning');
+      const hasHighPriority = completedTasks.some(t => t.priority === 'high');
+
+      return [
+        { id: 'first_prompt', title: 'Мастер Промпта', desc: 'Выполнить задачу на промптинг или AI', icon: '⚡', unlocked: hasPrompting },
+        { id: 'hardcore_solved', title: 'Тяжеловес', desc: 'Завершить сложную задачу с высоким приоритетом', icon: '🔥', unlocked: hasHighPriority },
+        { id: 'shipped_mvp', title: 'Релиз в прод!', desc: 'Завершить задачу категории «Шиппинг & Деплой»', icon: '🚀', unlocked: hasShipping },
+        { id: 'ui_tuner', title: 'Перфекционист UI', desc: 'Выполнить задачу полировки «Тюнинг & UI»', icon: '🎨', unlocked: hasTuning },
+        { id: 'coffee_boost', title: 'Топливо для кодинга', desc: 'Отметить задачу отдыха или кофе-паузы', icon: '☕', unlocked: hasFuel },
+        { id: 'zen_flow', title: 'Вход в поток', desc: 'Поймать рабочий вайб и сфокусироваться', icon: '🎧', unlocked: hasFlow },
+        { id: 'balance_master', title: 'Идеальный баланс', desc: 'Набрать не менее 50 очков и в Скилле, и в Вайбе', icon: '☯️', unlocked: totalSkill >= 50 && totalVibe >= 50 },
+        { id: 'marathon', title: 'Марафонец вайба', desc: 'Выполнить суммарно 5 любых задач за день', icon: '🌟', unlocked: completedTasks.length >= 5 }
+      ];
+    }
+
+    function switchToTasksTab() {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      const tasksTabBtn = document.querySelector('.tab-btn[data-tab="tasks"]');
+      if (tasksTabBtn) tasksTabBtn.classList.add('active');
+      document.getElementById('tab-tasks').style.display = 'block';
+      document.getElementById('tab-stats').style.display = 'none';
+      document.getElementById('tab-guide').style.display = 'none';
+    }
+    window.switchToTasksTab = switchToTasksTab;
+
+    function switchToStatsTab() {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      const statsTabBtn = document.querySelector('.tab-btn[data-tab="stats"]');
+      if (statsTabBtn) statsTabBtn.classList.add('active');
+      document.getElementById('tab-tasks').style.display = 'none';
+      document.getElementById('tab-stats').style.display = 'block';
+      document.getElementById('tab-guide').style.display = 'none';
+      renderStats();
+    }
+    window.switchToStatsTab = switchToStatsTab;
+
+    function renderStats() {
+      const completedTasks = tasks.filter(t => t.completed);
+      let totalSkill = 0, totalVibe = 0;
+      const historyItems = [];
+
+      completedTasks.forEach(t => {
+        const pts = calcPoints(t);
+        totalSkill += pts.skill;
+        totalVibe += pts.vibe;
+        historyItems.push({ task: t, points: pts });
+      });
+
+      const totalBoth = totalSkill + totalVibe;
+      const skillPercent = totalBoth > 0 ? Math.round((totalSkill / totalBoth) * 100) : 50;
+      const vibePercent = totalBoth > 0 ? 100 - skillPercent : 50;
+
+      // Update counters
+      const totalXpEl = document.getElementById('statsTotalXp');
+      if (totalXpEl) totalXpEl.textContent = totalBoth + ' XP';
+
+      const skillValInline = document.getElementById('statsSkillValInline');
+      if (skillValInline) skillValInline.textContent = totalSkill + ' XP';
+
+      const vibeValInline = document.getElementById('statsVibeValInline');
+      if (vibeValInline) vibeValInline.textContent = totalVibe + ' XP';
+
+      // Balance
+      const balSkillEl = document.getElementById('balanceSkillPercent');
+      if (balSkillEl) balSkillEl.textContent = skillPercent + '%';
+      const balVibeEl = document.getElementById('balanceVibePercent');
+      if (balVibeEl) balVibeEl.textContent = vibePercent + '%';
+
+      const balFillSkill = document.getElementById('balanceFillSkill');
+      if (balFillSkill) balFillSkill.style.width = skillPercent + '%';
+      const balFillVibe = document.getElementById('balanceFillVibe');
+      if (balFillVibe) balFillVibe.style.width = vibePercent + '%';
+
+      const balStatusTitle = document.getElementById('balanceStatusTitle');
+      const balStatusDesc = document.getElementById('balanceStatusDesc');
+      if (balStatusTitle && balStatusDesc) {
+        if (totalBoth === 0) {
+          balStatusTitle.textContent = 'Сессия только началась';
+          balStatusDesc.textContent = 'Выполните первые задачи дня для начисления очков!';
+        } else {
+          const diff = Math.abs(skillPercent - vibePercent);
+          if (diff <= 15) {
+            balStatusTitle.textContent = 'Идеальный баланс! ☯️';
+            balStatusDesc.textContent = 'Вы эффективно кодите и заботитесь о ментальном комфорте';
+          } else if (skillPercent > vibePercent) {
+            balStatusTitle.textContent = 'Уклон в хардкор ⚡';
+            balStatusDesc.textContent = 'Высокая нагрузка по задачам! Не забудьте сделать кофе-брейк';
+          } else {
+            balStatusTitle.textContent = 'Максимальный чилл ☕';
+            balStatusDesc.textContent = 'Отличный вайб и отдых, самое время зашипить сложную фичу';
+          }
+        }
+      }
+
+      // Skill Progression
+      const skillProgress = getLevelProgress(totalSkill, SKILL_LEVELS);
+      const skillBadge = document.getElementById('statsSkillBadge');
+      if (skillBadge) skillBadge.textContent = 'Ур. ' + skillProgress.currentLevel.level;
+
+      const skillIcon = document.getElementById('statsSkillIcon');
+      if (skillIcon) skillIcon.textContent = skillProgress.currentLevel.icon;
+
+      const skillTitle = document.getElementById('statsSkillTitle');
+      if (skillTitle) skillTitle.textContent = skillProgress.currentLevel.title;
+
+      const skillPerk = document.getElementById('statsSkillPerk');
+      if (skillPerk) skillPerk.textContent = skillProgress.currentLevel.perk;
+
+      const skillXpLabel = document.getElementById('statsSkillXpLabel');
+      if (skillXpLabel) {
+        skillXpLabel.textContent = totalSkill + ' XP ' + (skillProgress.nextLevel ? '/ ' + skillProgress.currentLevel.maxXp + ' XP' : '(МАКС)');
+      }
+
+      const skillProgressBar = document.getElementById('statsSkillProgressBar');
+      if (skillProgressBar) {
+        skillProgressBar.style.width = skillProgress.progressPercent + '%';
+      }
+
+      const skillNextInfo = document.getElementById('statsSkillNextInfo');
+      if (skillNextInfo) {
+        if (skillProgress.nextLevel) {
+          skillNextInfo.innerHTML = 'До «' + skillProgress.nextLevel.title + '»: ещё <strong>' + skillProgress.neededForNext + ' XP</strong>';
+        } else {
+          skillNextInfo.innerHTML = '<strong style="color: #facc15;">🏆 Достигнут максимальный ранг!</strong>';
+        }
+      }
+
+      // Vibe Progression
+      const vibeProgress = getLevelProgress(totalVibe, VIBE_LEVELS);
+      const vibeBadge = document.getElementById('statsVibeBadge');
+      if (vibeBadge) vibeBadge.textContent = 'Ур. ' + vibeProgress.currentLevel.level;
+
+      const vibeIcon = document.getElementById('statsVibeIcon');
+      if (vibeIcon) vibeIcon.textContent = vibeProgress.currentLevel.icon;
+
+      const vibeTitle = document.getElementById('statsVibeTitle');
+      if (vibeTitle) vibeTitle.textContent = vibeProgress.currentLevel.title;
+
+      const vibePerk = document.getElementById('statsVibePerk');
+      if (vibePerk) vibePerk.textContent = vibeProgress.currentLevel.perk;
+
+      const vibeXpLabel = document.getElementById('statsVibeXpLabel');
+      if (vibeXpLabel) {
+        vibeXpLabel.textContent = totalVibe + ' XP ' + (vibeProgress.nextLevel ? '/ ' + vibeProgress.currentLevel.maxXp + ' XP' : '(МАКС)');
+      }
+
+      const vibeProgressBar = document.getElementById('statsVibeProgressBar');
+      if (vibeProgressBar) {
+        vibeProgressBar.style.width = vibeProgress.progressPercent + '%';
+      }
+
+      const vibeNextInfo = document.getElementById('statsVibeNextInfo');
+      if (vibeNextInfo) {
+        if (vibeProgress.nextLevel) {
+          vibeNextInfo.innerHTML = 'До «' + vibeProgress.nextLevel.title + '»: ещё <strong>' + vibeProgress.neededForNext + ' XP</strong>';
+        } else {
+          vibeNextInfo.innerHTML = '<strong style="color: #facc15;">✨ Достигнут максимальный ранг!</strong>';
+        }
+      }
+
+      // History of points list
+      const historyListEl = document.getElementById('statsHistoryList');
+      const historyCountEl = document.getElementById('statsHistoryCount');
+      if (historyCountEl) historyCountEl.textContent = '(' + historyItems.length + ' выполненных)';
+
+      if (historyListEl) {
+        if (historyItems.length === 0) {
+          historyListEl.innerHTML = `
+            <div style="text-align: center; padding: 24px 16px; border: 1px dashed rgba(99, 102, 241, 0.3); border-radius: 12px; background: #0c0f2b;">
+              <p style="font-size: 0.78rem; color: #94a3b8; margin-bottom: 8px;">
+                Вы пока не отметили ни одной выполненной задачи через чекбокс.
+              </p>
+              <button type="button" class="btn-main btn-gen" onclick="switchToTasksTab()" style="padding: 6px 14px; font-size: 0.75rem;">
+                Перейти к задачам и отметить
+              </button>
+            </div>
+          `;
+        } else {
+          historyListEl.innerHTML = historyItems.map(item => {
+            const cat = CATEGORIES[item.task.category] || CATEGORIES.prompting;
+            return `
+              <div class="history-item">
+                <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
+                  <span style="color: #34d399; font-weight: bold; flex-shrink: 0;">✓</span>
+                  <span style="color: #f1f5f9; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.task.title}</span>
+                  <span class="badge ${cat.class}" style="flex-shrink: 0;">${cat.icon} ${cat.label}</span>
+                </div>
+                <div style="display: flex; gap: 6px; flex-shrink: 0; margin-left: 10px;">
+                  <span style="background: #1e1b4b; color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.4); padding: 2px 7px; border-radius: 6px; font-family: monospace; font-size: 0.72rem; font-weight: 700;">
+                    +${item.points.skill} Скилл
+                  </span>
+                  <span style="background: #4a044e; color: #fbcfe8; border: 1px solid rgba(236, 72, 153, 0.4); padding: 2px 7px; border-radius: 6px; font-family: monospace; font-size: 0.72rem; font-weight: 700;">
+                    +${item.points.vibe} Вайб
+                  </span>
+                </div>
+              </div>
+            `;
+          }).reverse().join('');
+        }
+      }
+
+      // Achievements
+      const achs = getAchievements(completedTasks, totalSkill, totalVibe);
+      const unlockedCount = achs.filter(a => a.unlocked).length;
+      const unlockedAchEl = document.getElementById('statsUnlockedAch');
+      if (unlockedAchEl) unlockedAchEl.textContent = unlockedCount + ' / ' + achs.length;
+
+      const achGridEl = document.getElementById('statsAchievementsGrid');
+      if (achGridEl) {
+        achGridEl.innerHTML = achs.map(ach => `
+          <div class="achievement-card ${ach.unlocked ? 'unlocked' : 'locked'}">
+            <div class="achievement-icon">${ach.icon}</div>
+            <div style="min-width: 0; flex: 1;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <h4 style="font-size: 0.82rem; font-weight: 700; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  ${ach.title}
+                </h4>
+                ${ach.unlocked ? '<span style="color: #34d399; font-size: 0.75rem;">🛡️</span>' : ''}
+              </div>
+              <p style="font-size: 0.7rem; color: #94a3b8; margin: 2px 0 0 0; line-height: 1.3;">
+                ${ach.desc}
+              </p>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function calcPoints(task) {
+      const cat = CATEGORIES[task.category] || CATEGORIES.prompting;
+      let mult = task.priority === 'high' ? 1.5 : (task.priority === 'medium' ? 1.2 : 1.0);
+      return {
+        skill: Math.round(cat.baseSkill * mult),
+        vibe: Math.round(cat.baseVibe * mult)
+      };
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+      } catch (e) {}
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3200);
+    }
+
+    function render() {
+      const listContainer = document.getElementById('tasksList');
+      listContainer.innerHTML = '';
+
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+
+      const filtered = tasks.filter(t => {
+        if (currentFilter === 'active' && t.completed) return false;
+        if (currentFilter === 'completed' && !t.completed) return false;
+        if (query && !t.title.toLowerCase().includes(query)) return false;
+        return true;
+      });
+
+      const completedCount = tasks.filter(t => t.completed).length;
+      const totalCount = tasks.length;
+      const percent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+      document.getElementById('progressText').textContent = completedCount + ' / ' + totalCount;
+      document.getElementById('progressBar').style.width = percent + '%';
+      document.getElementById('progressPercent').textContent = percent + '%';
+
+      document.getElementById('countAll').textContent = totalCount;
+      document.getElementById('countActive').textContent = totalCount - completedCount;
+      document.getElementById('countCompleted').textContent = completedCount;
+
+      renderStats();
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = '<div style="text-align: center; padding: 40px; color: #94a3b8; font-size: 0.85rem;">Задач не найдено. Нажмите «🎲 180+» или «⚡ Сгенерировать»!</div>';
+        return;
+      }
+
+      filtered.forEach(task => {
+        const pts = calcPoints(task);
+        const cat = CATEGORIES[task.category] || CATEGORIES.prompting;
+        const div = document.createElement('div');
+        div.className = 'task-item' + (task.completed ? ' completed' : '');
+
+        div.innerHTML = `
+          <div class="task-left">
+            <div class="task-checkbox ${task.completed ? 'checked' : ''}" data-id="${task.id}">
+              ${task.completed ? '✓' : ''}
+            </div>
+            <div>
+              <div class="task-title" data-id="${task.id}">${task.title}</div>
+              <div class="task-meta">
+                <span class="badge ${cat.class}">${cat.icon} ${cat.label}</span>
+                ${task.time ? '<span style="color: #a5b4fc;">⏰ ' + task.time + '</span>' : ''}
+                <span class="xp-badge">+${pts.skill} Скилл • +${pts.vibe} Вайб</span>
+              </div>
+            </div>
+          </div>
+          <button class="delete-item-btn" data-del="${task.id}">🗑️</button>
+        `;
+        listContainer.appendChild(div);
+      });
+    }
+
+    function toggleTask(id) {
+      tasks = tasks.map(t => {
+        if (t.id === id) {
+          const nextVal = !t.completed;
+          if (nextVal) {
+            const pts = calcPoints(t);
+            showToast('🎉 Выполнено! +' + pts.skill + ' к Скиллу, +' + pts.vibe + ' к Вайбу');
+          }
+          return { ...t, completed: nextVal };
+        }
+        return t;
+      });
+      saveState();
+      render();
+    }
+
+    function deleteTask(id) {
+      tasks = tasks.filter(t => t.id !== id);
+      saveState();
+      render();
+      showToast('Задача удалена');
+    }
+
+    function addDirectRandom() {
+      const item = getRandomItem();
+      tasks.unshift({
+        id: 'vibe-' + Date.now(),
+        title: item.title,
+        category: item.category,
+        priority: item.priority,
+        time: item.time || '',
+        completed: false,
+        createdAt: new Date().toISOString()
+      });
+      saveState();
+      render();
+      showToast('🎲 Добавлена случайная задача из 180+: «' + item.title + '»');
+    }
+
+    function downloadJson() {
+      const jsonStr = JSON.stringify(tasks, null, 2);
+      saveState();
+      const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const today = new Date().toISOString().split('T')[0];
+      link.href = url;
+      link.download = 'tasks_' + today + '.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showToast('💾 Файл tasks.json успешно сохранен на ваш ПК!');
+    }
+
+    function setupEvents() {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const target = btn.dataset.tab;
+          document.getElementById('tab-tasks').style.display = target === 'tasks' ? 'block' : 'none';
+          document.getElementById('tab-stats').style.display = target === 'stats' ? 'block' : 'none';
+          document.getElementById('tab-guide').style.display = target === 'guide' ? 'block' : 'none';
+          document.getElementById('tab-tools').style.display = target === 'tools' ? 'block' : 'none';
+          document.getElementById('tab-themes').style.display = target === 'themes' ? 'block' : 'none';
+          if (target === 'stats') {
+            renderStats();
+          }
+        });
+      });
+
+      // Tools tab filter & search
+      let currentToolCat = 'all';
+      function filterTools() {
+        const query = (document.getElementById('toolSearchInput')?.value || '').toLowerCase().trim();
+        document.querySelectorAll('#toolsListContainer .tool-card').forEach(card => {
+          const cat = card.dataset.category;
+          const searchData = (card.dataset.search || '') + ' ' + card.innerText.toLowerCase();
+          const matchesCat = currentToolCat === 'all' || cat === currentToolCat;
+          const matchesSearch = !query || searchData.includes(query);
+          card.style.display = matchesCat && matchesSearch ? 'flex' : 'none';
+        });
+      }
+
+      document.querySelectorAll('.tool-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tool-filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentToolCat = btn.dataset.toolCat;
+          filterTools();
+        });
+      });
+
+      const toolSearchInput = document.getElementById('toolSearchInput');
+      if (toolSearchInput) {
+        toolSearchInput.addEventListener('input', filterTools);
+      }
+
+      document.querySelectorAll('.btn-copy-tool-url').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const url = btn.dataset.copy;
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(() => {
+              showToast('🔗 Ссылка скопирована: ' + url);
+            });
+          } else {
+            showToast('Ссылка: ' + url);
+          }
+        });
+      });
+
+      const goToTasksBtn = document.getElementById('btnGoToTasksFromStats');
+      if (goToTasksBtn) {
+        goToTasksBtn.addEventListener('click', switchToTasksTab);
+      }
+
+      document.querySelectorAll('.status-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.status-tab').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.dataset.filter;
+          render();
+        });
+      });
+
+      document.getElementById('searchInput').addEventListener('input', render);
+      document.getElementById('btnSaveJson').addEventListener('click', downloadJson);
+      document.getElementById('headerSaveBtn').addEventListener('click', downloadJson);
+      document.getElementById('btnDirectRandom').addEventListener('click', addDirectRandom);
+
+      document.getElementById('btnGenerate').addEventListener('click', () => {
+        const p = document.getElementById('presetSelect').value;
+        tasks = generatePresetTasks(p);
+        saveState();
+        render();
+        showToast('⚡ Сгенерировано 6 неповторяющихся задач из 180+!');
+      });
+
+      document.getElementById('btnAppend').addEventListener('click', () => {
+        const item = getRandomItem();
+        tasks.push({
+          id: 'vibe-' + Date.now(),
+          title: item.title,
+          category: item.category,
+          priority: item.priority,
+          time: item.time || '',
+          completed: false,
+          createdAt: new Date().toISOString()
+        });
+        saveState();
+        render();
+        showToast('Добавлена случайная задача: ' + item.title);
+      });
+
+      document.getElementById('tasksList').addEventListener('click', (e) => {
+        const chk = e.target.closest('.task-checkbox');
+        if (chk) return toggleTask(chk.dataset.id);
+        const title = e.target.closest('.task-title');
+        if (title) return toggleTask(title.dataset.id);
+        const delBtn = e.target.closest('.delete-item-btn');
+        if (delBtn) return deleteTask(delBtn.dataset.del);
+      });
+
+      const addModal = document.getElementById('addModal');
+      const deleteModal = document.getElementById('deleteModal');
+      const manifestoModal = document.getElementById('manifestoModal');
+
+      const btnOpenManifestoModal = document.getElementById('btnOpenManifestoModal');
+      if (btnOpenManifestoModal && manifestoModal) {
+        btnOpenManifestoModal.addEventListener('click', () => {
+          manifestoModal.classList.add('open');
+        });
+      }
+
+      document.getElementById('btnOpenAdd').addEventListener('click', () => {
+        addModal.classList.add('open');
+        document.getElementById('taskTitleInput').focus();
+      });
+
+      document.getElementById('btnOpenDelete').addEventListener('click', () => {
+        deleteModal.classList.add('open');
+      });
+
+      document.querySelectorAll('.closeModalBtn').forEach(b => {
+        b.addEventListener('click', () => {
+          addModal.classList.remove('open');
+          deleteModal.classList.remove('open');
+          if (manifestoModal) manifestoModal.classList.remove('open');
+        });
+      });
+
+      window.addEventListener('click', (e) => {
+        if (e.target === manifestoModal) manifestoModal.classList.remove('open');
+        if (e.target === addModal) addModal.classList.remove('open');
+        if (e.target === deleteModal) deleteModal.classList.remove('open');
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (manifestoModal) manifestoModal.classList.remove('open');
+          if (addModal) addModal.classList.remove('open');
+          if (deleteModal) deleteModal.classList.remove('open');
+        }
+      });
+
+      document.getElementById('btnModalRandom').addEventListener('click', () => {
+        const item = getRandomItem();
+        document.getElementById('taskTitleInput').value = item.title;
+        document.getElementById('taskCategorySelect').value = item.category;
+        document.getElementById('taskPrioritySelect').value = item.priority;
+        document.getElementById('taskTimeInput').value = item.time || '';
+      });
+
+      document.getElementById('addForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('taskTitleInput').value.trim();
+        if (!title) return;
+        tasks.unshift({
+          id: 'vibe-' + Date.now(),
+          title: title,
+          category: document.getElementById('taskCategorySelect').value,
+          priority: document.getElementById('taskPrioritySelect').value,
+          time: document.getElementById('taskTimeInput').value,
+          completed: false,
+          createdAt: new Date().toISOString()
+        });
+        document.getElementById('taskTitleInput').value = '';
+        addModal.classList.remove('open');
+        saveState();
+        render();
+        showToast('Задача успешно добавлена!');
+      });
+
+      document.getElementById('btnDeleteCompleted').addEventListener('click', () => {
+        tasks = tasks.filter(t => !t.completed);
+        deleteModal.classList.remove('open');
+        saveState();
+        render();
+        showToast('Выполненные задачи удалены');
+      });
+
+      document.getElementById('btnClearAll').addEventListener('click', () => {
+        if (confirm('Очистить весь список задач?')) {
+          tasks = [];
+          deleteModal.classList.remove('open');
+          saveState();
+          render();
+          showToast('Список полностью очищен');
+        }
+      });
+
+      // Themes selection
+      document.querySelectorAll('.theme-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const t = card.dataset.themeId;
+          if (t) {
+            applyTheme(t);
+            const nameMap = { author: 'Авторский', hacker: 'Хакер', angel: 'Ангел' };
+            showToast('🎨 Оформление переключено на «' + (nameMap[t] || t) + '»!');
+          }
+        });
+      });
+
+      const resetThemeBtn = document.getElementById('btnResetToAuthorTheme');
+      if (resetThemeBtn) {
+        resetThemeBtn.addEventListener('click', () => {
+          applyTheme('author');
+          showToast('🎨 Оформление сброшено на «Авторский»!');
+        });
+      }
+
+      // Demo theme interactive item
+      let demoCompleted = false;
+      const demoCheckbox = document.getElementById('demoThemeCheckbox');
+      const demoBtn = document.getElementById('demoThemeToggleBtn');
+      const demoTitle = document.getElementById('demoThemeTitle');
+      const toggleDemo = () => {
+        demoCompleted = !demoCompleted;
+        if (demoCheckbox) {
+          demoCheckbox.textContent = demoCompleted ? '✓' : '';
+          demoCheckbox.classList.toggle('checked', demoCompleted);
+        }
+        if (demoBtn) {
+          demoBtn.textContent = demoCompleted ? 'Отменить' : 'Завершить';
+        }
+        if (demoTitle) {
+          demoTitle.style.textDecoration = demoCompleted ? 'line-through' : 'none';
+          demoTitle.style.opacity = demoCompleted ? '0.7' : '1';
+        }
+      };
+      if (demoCheckbox) demoCheckbox.addEventListener('click', toggleDemo);
+      if (demoBtn) demoBtn.addEventListener('click', toggleDemo);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
